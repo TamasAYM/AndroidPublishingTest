@@ -59,7 +59,7 @@ references:
   decode_console_key: &decode_console_key
     run:
       name: Decode Google console credentials
-      command: echo $CONSOLE_SERVICE_KEY | base64 -di > ${HOME}/AndroidPublishingTest/etc/key.json
+      command: echo $CONSOLE_SERVICE_KEY | base64 -di > ${HOME}/workspace/AndroidPublishingTest/etc/key.json
 
 jobs:
 
@@ -91,7 +91,7 @@ jobs:
   app:
     <<: *android_config
     environment:
-      FL_OUTPUT_DIR: ~/workspace/output
+      FL_OUTPUT_DIR: ~/workspace
       FASTLANE_LANE: app
     steps:
       - checkout
