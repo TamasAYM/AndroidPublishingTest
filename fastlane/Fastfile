@@ -23,6 +23,11 @@ platform :android do
   		task: "app:assembleRelease"
   	)
 
+  	upload_to_play_store(
+        track: 'alpha',
+        rollout: '1'
+    )
+
   end
 
   lane :increment_version do
