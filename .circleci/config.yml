@@ -30,6 +30,7 @@ references:
         - app/build/intermediates
         - app/build/outputs/androidTest-results
         - app/build/outputs/apk
+        - app/build/outputs/mapping
         - app/build/outputs/code-coverage
         - app/build/test-results
         - app/build/jacoco
@@ -132,7 +133,7 @@ jobs:
   increment_version:
     <<: *android_config
     environment:
-      FL_OUTPUT_DIR: ~/workspace/output
+      FL_OUTPUT_DIR: ~/workspace
       FASTLANE_LANE: increment_version
     steps:
       - checkout
