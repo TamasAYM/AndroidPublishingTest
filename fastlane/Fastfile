@@ -25,7 +25,11 @@ platform :android do
 
   	upload_to_play_store(
         track: 'alpha',
-        rollout: '1'
+        rollout: '1',
+        skip_upload_metadata: true,
+        skip_upload_images: true,
+        skip_upload_screenshots: true,
+        mapping: '/home/circleci/workspace/app/build/outputs/mapping/release/mapping.txt'
     )
 
   end
