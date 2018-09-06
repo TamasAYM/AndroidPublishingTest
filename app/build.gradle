@@ -12,12 +12,6 @@ android {
 		versionName readVersionName(project)
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
 	signingConfigs {
 		release {
 			storeFile file("../etc/dev.jks")
@@ -27,6 +21,14 @@ android {
 			keyPassword System.getenv("KEY_PASSWORD")
 		}
 	}
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+			signingConfig signingConfigs.release
+        }
+    }
 }
 
 dependencies {
