@@ -33,6 +33,7 @@ platform :android do
         skip_upload_metadata: true,
         skip_upload_images: true,
         skip_upload_screenshots: true,
+        apk: '/home/circleci/workspace/app/build/outputs/apk/release/app-release.apk'
         mapping: '/home/circleci/workspace/app/build/outputs/mapping/release/mapping.txt'
     )
 
