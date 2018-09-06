@@ -59,7 +59,7 @@ references:
   decode_console_key: &decode_console_key
     run:
       name: Decode Google console credentials
-      command: echo $CONSOLE_SERVICE_KEY | base64 -di > ~/workspace/AndroidPublishingTest/etc/key.json
+      command: echo $CONSOLE_SERVICE_KEY | base64 -di > ${HOME}/AndroidPublishingTest/etc/key.json
 
 jobs:
 
