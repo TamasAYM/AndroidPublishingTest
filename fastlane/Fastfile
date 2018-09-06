@@ -23,6 +23,10 @@ platform :android do
   		task: "app:assembleRelease"
   	)
 
+  end
+
+  lane :app_deploy do
+
   	upload_to_play_store(
         track: 'alpha',
         rollout: '1',
