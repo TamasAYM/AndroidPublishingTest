@@ -21,4 +21,5 @@ public class Beer {
 		}
 		return 0;
 	}
+
 }
