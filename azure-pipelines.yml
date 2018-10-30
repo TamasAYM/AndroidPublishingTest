@@ -12,54 +12,54 @@ jobs:
       publishJUnitResults: false
       tasks: 'cleanAndInit'
 
-  - task: Gradle@2
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      gradleOptions: '-Xmx3072m'
-      publishJUnitResults: false
-      tasks: 'assembleAppForCI'
-
-  - task: Gradle@2
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      gradleOptions: '-Xmx3072m'
-      publishJUnitResults: true
-      testResultsFiles: '**/TEST-*.xml'
-      tasks: 'runUnitTests'
-
-  - task: Gradle@2
-    env:
-      ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      gradleOptions: '-Xmx3072m'
-      tasks: 'sonarqube'
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-
-  - task: Gradle@2
-    env:
-      ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
-      AZURE_BRANCH: $(Build.SourceBranchName)
-      GITHUB_SONAR_OAUTH: $(GITHUB_SONAR_OAUTH)
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      gradleOptions: '-Xmx3072m'
-      tasks: 'sonarqube -Dsonar.analysis.mode=preview -Dsonar.github.pullRequest=$(System.PullRequest.PullRequestNumber) -Dsonar.github.repository=TamasAYM/AndroidPublishingTest -Dsonar.github.oauth=$(GITHUB_SONAR_OAUTH)'
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
-
-  - task: CopyFiles@2
-    inputs:
-      contents: 'app/build/reports/**/*.*'
-      targetFolder: '$(build.artifactStagingDirectory)'
-
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathToPublish: '$(build.artifactStagingDirectory)'
-      artifactName: 'Reports'
+#  - task: Gradle@2
+#    inputs:
+#      workingDirectory: ''
+#      gradleWrapperFile: 'gradlew'
+#      gradleOptions: '-Xmx3072m'
+#      publishJUnitResults: false
+#      tasks: 'assembleAppForCI'
+#
+#  - task: Gradle@2
+#    inputs:
+#      workingDirectory: ''
+#      gradleWrapperFile: 'gradlew'
+#      gradleOptions: '-Xmx3072m'
+#      publishJUnitResults: true
+#      testResultsFiles: '**/TEST-*.xml'
+#      tasks: 'runUnitTests'
+#
+#  - task: Gradle@2
+#    env:
+#      ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
+#    inputs:
+#      workingDirectory: ''
+#      gradleWrapperFile: 'gradlew'
+#      gradleOptions: '-Xmx3072m'
+#      tasks: 'sonarqube'
+#    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#
+#  - task: Gradle@2
+#    env:
+#      ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
+#      AZURE_BRANCH: $(Build.SourceBranchName)
+#      GITHUB_SONAR_OAUTH: $(GITHUB_SONAR_OAUTH)
+#    inputs:
+#      workingDirectory: ''
+#      gradleWrapperFile: 'gradlew'
+#      gradleOptions: '-Xmx3072m'
+#      tasks: 'sonarqube -Dsonar.analysis.mode=preview -Dsonar.github.pullRequest=$(System.PullRequest.PullRequestNumber) -Dsonar.github.repository=TamasAYM/AndroidPublishingTest -Dsonar.github.oauth=$(GITHUB_SONAR_OAUTH)'
+#    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+#
+#  - task: CopyFiles@2
+#    inputs:
+#      contents: 'app/build/reports/**/*.*'
+#      targetFolder: '$(build.artifactStagingDirectory)'
+#
+#  - task: PublishBuildArtifacts@1
+#    inputs:
+#      pathToPublish: '$(build.artifactStagingDirectory)'
+#      artifactName: 'Reports'
 
 - job: BuildArtifacts
   pool:
@@ -74,7 +74,7 @@ jobs:
       gradleWrapperFile: 'gradlew'
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
-      tasks: 'configureMappingArtifacts configureApkArtifacts'
+      tasks: 'configureMappingArtifacts configureApkArtifacts -Penvironment=us'
 
   - task: CopyFiles@2
     inputs:
@@ -91,4 +91,26 @@ jobs:
       pathToPublish: '$(build.artifactStagingDirectory)'
       artifactName: 'BuildArtifacts'
   dependsOn: TestAndAnalyse
+  condition: succeeded()
+
+- job: ApproveHockeyApp
+  timeoutInMinutes: 43200
+  cancelTimeoutInMinutes: 43200
+  pool: server
+  - task: ManualIntervention@8
+
+  dependsOn: BuildArtifacts
+
+- job: DeployToHockeyApp
+  pool:
+    vmImage: 'macOS 10.13'
+  steps:
+  - checkout: none #skip checking out the default repository resource
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download Build Artifacts'
+    inputs:
+      artifactName: BuildArtifacts
+      downloadPath: $(System.DefaultWorkingDirectory)
+
+  dependsOn: ApproveHockeyApp
   condition: succeeded()
