@@ -11,4 +11,14 @@ public class Beer {
 	public int getBeersChugged() {
 		return beersChugged;
 	}
+
+	public int getBeersChuggedWrong() {
+		try {
+			return beersChugged;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
 }

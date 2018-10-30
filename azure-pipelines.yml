@@ -32,12 +32,24 @@ jobs: $(Build.DefinitionName)-$(SourceBranchName)_$(date:yyyyMMdd)
   - task: Gradle@2
     env:
       ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
-      AZURE_BRANCH: $(Build.SourceBranch)
     inputs:
       workingDirectory: ''
       gradleWrapperFile: 'gradlew'
       gradleOptions: '-Xmx3072m'
       tasks: 'sonarqube'
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+
+  - task: Gradle@2
+    env:
+      ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
+      AZURE_BRANCH: $(Build.SourceBranchName)
+      GITHUB_SONAR_OAUTH: $(GITHUB_SONAR_OAUTH)
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      tasks: 'sonarqube -Dsonar.analysis.mode=preview -Dsonar.github.pullRequest=$(System.PullRequest.PullRequestId) -Dsonar.github.repository=tamasaym-github/AndroidPublishingTest -Dsonar.github.oauth=$(GITHUB_SONAR_OAUTH)'
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
   - task: CopyFiles@2
     inputs:
@@ -49,7 +61,7 @@ jobs: $(Build.DefinitionName)-$(SourceBranchName)_$(date:yyyyMMdd)
       pathToPublish: '$(build.artifactStagingDirectory)'
       artifactName: 'Reports'
 
-- job:
+- job: BuildArtifacts
   pool:
     vmImage: 'macOS 10.13'
   steps:
