@@ -97,6 +97,7 @@ jobs:
   timeoutInMinutes: 43200
   cancelTimeoutInMinutes: 43200
   pool: server
+  steps:
   - task: ManualIntervention@8
     inputs:
       displayName: 'Approve hockey app'
