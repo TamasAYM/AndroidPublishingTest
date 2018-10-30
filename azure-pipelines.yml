@@ -29,6 +29,7 @@ steps:
     gradleWrapperFile: 'gradlew'
     gradleOptions: '-Xmx3072m'
     publishJUnitResults: true
+    codeCoverageToolOption: jaCoCo
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'runUnitTests'
 
@@ -41,6 +42,14 @@ steps:
     gradleWrapperFile: 'gradlew'
     gradleOptions: '-Xmx3072m'
     tasks: 'sonarqube'
+
+#- task: Gradle@2
+#  inputs:
+#    workingDirectory: ''
+#    gradleWrapperFile: 'gradlew'
+#    gradleOptions: '-Xmx3072m'
+#    publishJUnitResults: false
+#    tasks: 'configureMappingArtifacts configureApkArtifacts'
 
 - task: CopyFiles@2
   inputs:
