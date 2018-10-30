@@ -69,12 +69,13 @@ jobs:
     env:
       KEYSTORE_PASSWORD: $(KEYSTORE_PASSWORD)
       KEY_PASSWORD: $(KEY_PASSWORD)
+      ENVIRONMENT_FILTER: $(ENVIRONMENT_FILTER)
     inputs:
       workingDirectory: ''
       gradleWrapperFile: 'gradlew'
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
-      tasks: 'configureMappingArtifacts configureApkArtifacts -Penvironment=us'
+      tasks: 'configureMappingArtifacts configureApkArtifacts -Penvironment=$(ENVIRONMENT_FILTER)'
 
   - task: CopyFiles@2
     inputs:
