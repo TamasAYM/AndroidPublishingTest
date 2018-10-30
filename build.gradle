@@ -37,7 +37,7 @@ apply from: 'ci.gradle'
 sonarqube {
 	androidVariant 'envUsDebug'
 	properties {
-		property "sonar.organization", "TamasAYM"
+		property "sonar.organization", "tamasaym-github"
 		property "sonar.projectKey", "AndroidPublishingTest"
 		property "sonar.projectName", "AndroidPublishingTest"
 		property "sonar.host.url", "https://sonarcloud.io"

@@ -20,6 +20,7 @@ steps:
     workingDirectory: ''
     gradleWrapperFile: 'gradlew'
     gradleOptions: '-Xmx3072m'
+    publishJUnitResults: false
     tasks: 'assembleAppForCI'
 
 - task: Gradle@2
