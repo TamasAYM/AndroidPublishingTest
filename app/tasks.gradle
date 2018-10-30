@@ -100,7 +100,7 @@ task configureMappingArtifacts() {
 
 // configure the apk artifacts, namely adding the renamed file to the artifact,
 // only adding those of environments in the environment variable 
-// Renaming e.g.: app-envUs-release.apk --> pampers-us-release.apk
+// Renaming e.g.: app-envUs-release.apk --> app-us-release.apk
 task configureApkArtifacts() {
 	dependsOn {
 		[
@@ -116,7 +116,7 @@ task configureApkArtifacts() {
 		def fromPath = "${buildDir}${File.separator}outputs${File.separator}apk"
 		fileTree(fromPath).include('**/**-release.apk').files.each { each ->
 			def newName = each.name.toLowerCase()
-			newName = newName.replaceAll('app-env', 'pampers-')
+			newName = newName.replaceAll('app-env', 'app-')
 			each.renameTo("${fromPath}${File.separator}${newName}")
 		}
 	}
