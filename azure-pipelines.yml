@@ -1,82 +1,79 @@
-# Android
-# Build your Android project with Gradle.
-# Add steps that test, sign, and distribute the APK, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/android
+jobs:
+- job: TestAndAnalyse
+  pool:
+    vmImage: 'macOS 10.13'
 
-pool:
-  vmImage: 'macOS 10.13'
+  steps:
+  - task: Gradle@2
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      tasks: 'cleanAndInit'
 
-steps:
-- task: Gradle@2
-  inputs:
-    workingDirectory: ''
-    gradleWrapperFile: 'gradlew'
-    gradleOptions: '-Xmx3072m'
-    publishJUnitResults: false
-    tasks: 'cleanAndInit'
+  - task: Gradle@2
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      tasks: 'assembleAppForCI'
 
-- task: Gradle@2
-  inputs:
-    workingDirectory: ''
-    gradleWrapperFile: 'gradlew'
-    gradleOptions: '-Xmx3072m'
-    publishJUnitResults: false
-    tasks: 'assembleAppForCI'
+  - task: Gradle@2
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: true
+      testResultsFiles: '**/TEST-*.xml'
+      tasks: 'runUnitTests'
 
-- task: Gradle@2
-  inputs:
-    workingDirectory: ''
-    gradleWrapperFile: 'gradlew'
-    gradleOptions: '-Xmx3072m'
-    publishJUnitResults: true
-    testResultsFiles: '**/TEST-*.xml'
-    tasks: 'runUnitTests'
+  - task: Gradle@2
+    env:
+      ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
+      AZURE_BRANCH: $(Build.SourceBranch)
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      tasks: 'sonarqube'
 
-- task: Gradle@2
-  inputs:
-    workingDirectory: ''
-    gradleWrapperFile: 'gradlew'
-    gradleOptions: '-Xmx3072m'
-    publishJUnitResults: false
-    tasks: 'jacocoMergedTestReport'
+  - task: CopyFiles@2
+    inputs:
+      contents: 'app/build/reports/**/*.*'
+      targetFolder: '$(build.artifactStagingDirectory)'
 
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: 'jaCoCo'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/app/**/jacocoMergedTestReport.xml'
-    reportDirectory: '$(System.DefaultWorkingDirectory)/app/build/reports/jacoco/jacocoMergedTestReport/html'
-    additionalCodeCoverageFiles: '$(System.DefaultWorkingDirectory)/app/build/jacoco/*.exec'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: '$(build.artifactStagingDirectory)'
+      artifactName: 'Reports'
 
-- task: Gradle@2
-  env:
-    ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
-    AZURE_BRANCH: $(Build.SourceBranch)
-  inputs:
-    workingDirectory: ''
-    gradleWrapperFile: 'gradlew'
-    gradleOptions: '-Xmx3072m'
-    tasks: 'sonarqube'
+- job:
+  pool:
+    vmImage: 'macOS 10.13'
+  steps:
+  - task: Gradle@2
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      tasks: 'configureMappingArtifacts configureApkArtifacts'
 
-#- task: Gradle@2
-#  inputs:
-#    workingDirectory: ''
-#    gradleWrapperFile: 'gradlew'
-#    gradleOptions: '-Xmx3072m'
-#    publishJUnitResults: false
-#    tasks: 'configureMappingArtifacts configureApkArtifacts'
+  - task: CopyFiles@2
+    inputs:
+      contents: '**/*.apk'
+      targetFolder: '$(build.artifactStagingDirectory)'
 
-- task: CopyFiles@2
-  inputs:
-    contents: '**/*.apk'
-    targetFolder: '$(build.artifactStagingDirectory)'
+  - task: CopyFiles@2
+    inputs:
+      contents: '**/mapping-.txt'
+      targetFolder: '$(build.artifactStagingDirectory)'
 
-- task: CopyFiles@2
-  inputs:
-    contents: 'app/build/reports/**/*.*'
-    targetFolder: '$(build.artifactStagingDirectory)'
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    pathToPublish: '$(build.artifactStagingDirectory)'
-    artifactName: 'drop'
-    artifactType: 'container'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: '$(build.artifactStagingDirectory)'
+      artifactName: 'BuildArtifacts'
+  dependsOn: TestAndAnalyse
+  condition: succeeded()
