@@ -83,7 +83,7 @@ jobs:
 
   - task: CopyFiles@2
     inputs:
-      contents: '**/mapping-.txt'
+      contents: '**/mapping-*.txt'
       targetFolder: '$(build.artifactStagingDirectory)'
 
   - task: PublishBuildArtifacts@1
@@ -93,18 +93,7 @@ jobs:
   dependsOn: TestAndAnalyse
   condition: succeeded()
 
-- job: ApproveHockeyApp
-  timeoutInMinutes: 43200
-  cancelTimeoutInMinutes: 43200
-  pool: server
-  steps:
-  - task: ManualIntervention@8
-    inputs:
-      displayName: 'Approve hockey app'
-
-  dependsOn: BuildArtifacts
-
-- job: DeployToHockeyApp
+- job: DeployToHockeyAppUS
   pool:
     vmImage: 'macOS 10.13'
   steps:
@@ -114,6 +103,20 @@ jobs:
     inputs:
       artifactName: BuildArtifacts
       downloadPath: $(System.DefaultWorkingDirectory)
+    - task: AppCenterDistribute@1
+      inputs:
+        appSlug: 'TamasAYM/AndroidPublishingTest'
+        appFile: '$(System.DefaultWorkingDirectory)/app/build/outputs/apk/app-us-release.apk'
+        symbolsMappingTxtFile: '$(System.DefaultWorkingDirectory)/app/build/outputs/apk/app-us-release.apk'
+        #symbolsOption: 'Apple' # Optional. Options: apple
+        #symbolsPath: # Optional
+        #symbolsPdbFiles: '**/*.pdb' # Optional
+        #symbolsDsymFiles: # Optional
+        #symbolsIncludeParentDirectory: # Optional
+        #releaseNotesOption: 'input' # Options: input, file
+        #releaseNotesInput: # Required when releaseNotesOption == Input
+        #releaseNotesFile: # Required when releaseNotesOption == File
+        #distributionGroupId: # Optional
 
-  dependsOn: ApproveHockeyApp
+  dependsOn: BuildArtifacts
   condition: succeeded()
