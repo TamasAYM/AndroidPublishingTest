@@ -29,9 +29,13 @@ steps:
     gradleWrapperFile: 'gradlew'
     gradleOptions: '-Xmx3072m'
     publishJUnitResults: true
-    codeCoverageToolOption: jaCoCo
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'runUnitTests'
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'jaCoCo'
+    additionalCodeCoverageFiles: 'build/jacoco/*.exec'
 
 - task: Gradle@2
   env:
