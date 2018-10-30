@@ -43,7 +43,7 @@ steps:
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: 'jaCoCo'
-    jacocoMergedTestReport: '$(System.DefaultWorkingDirectory)/app/**/jacocoMergedTestReport.xml'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/app/**/jacocoMergedTestReport.xml'
     reportDirectory: '$(System.DefaultWorkingDirectory)/app/build/reports/jacoco/jacocoMergedTestReport/html'
     additionalCodeCoverageFiles: 'build/jacoco/*.exec'
 
