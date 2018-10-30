@@ -45,7 +45,7 @@ steps:
     codeCoverageTool: 'jaCoCo'
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/app/**/jacocoMergedTestReport.xml'
     reportDirectory: '$(System.DefaultWorkingDirectory)/app/build/reports/jacoco/jacocoMergedTestReport/html'
-    additionalCodeCoverageFiles: 'build/jacoco/*.exec'
+    additionalCodeCoverageFiles: '$(System.DefaultWorkingDirectory)/app/build/jacoco/*.exec'
 
 - task: Gradle@2
   env:
