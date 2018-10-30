@@ -22,4 +22,14 @@ public class Beer {
 		return 0;
 	}
 
+	public int getBeersChuggedWrongToo() {
+		try {
+			return beersChugged;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
 }
