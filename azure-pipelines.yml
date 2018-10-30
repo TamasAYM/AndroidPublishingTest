@@ -93,30 +93,3 @@ jobs:
   dependsOn: TestAndAnalyse
   condition: succeeded()
 
-- job: DeployToHockeyAppUS
-  pool:
-    vmImage: 'macOS 10.13'
-  steps:
-  - checkout: none #skip checking out the default repository resource
-  - task: DownloadBuildArtifacts@0
-    displayName: 'Download Build Artifacts'
-    inputs:
-      artifactName: BuildArtifacts
-      downloadPath: $(System.DefaultWorkingDirectory)
-    - task: AppCenterDistribute@1
-      inputs:
-        appSlug: 'TamasAYM/AndroidPublishingTest'
-        appFile: '$(System.DefaultWorkingDirectory)/app/build/outputs/apk/app-us-release.apk'
-        symbolsMappingTxtFile: '$(System.DefaultWorkingDirectory)/app/build/outputs/apk/app-us-release.apk'
-        #symbolsOption: 'Apple' # Optional. Options: apple
-        #symbolsPath: # Optional
-        #symbolsPdbFiles: '**/*.pdb' # Optional
-        #symbolsDsymFiles: # Optional
-        #symbolsIncludeParentDirectory: # Optional
-        #releaseNotesOption: 'input' # Options: input, file
-        #releaseNotesInput: # Required when releaseNotesOption == Input
-        #releaseNotesFile: # Required when releaseNotesOption == File
-        #distributionGroupId: # Optional
-
-  dependsOn: BuildArtifacts
-  condition: succeeded()
