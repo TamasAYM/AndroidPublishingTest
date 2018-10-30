@@ -48,7 +48,7 @@ jobs:
       workingDirectory: ''
       gradleWrapperFile: 'gradlew'
       gradleOptions: '-Xmx3072m'
-      tasks: 'sonarqube -Dsonar.analysis.mode=preview -Dsonar.github.pullRequest=$(System.PullRequest.PullRequestId) -Dsonar.github.repository=TamasAYM/AndroidPublishingTest -Dsonar.github.oauth=$(GITHUB_SONAR_OAUTH)'
+      tasks: 'sonarqube -Dsonar.analysis.mode=preview -Dsonar.github.pullRequest=$(System.PullRequest.PullRequestNumber) -Dsonar.github.repository=TamasAYM/AndroidPublishingTest -Dsonar.github.oauth=$(GITHUB_SONAR_OAUTH)'
     condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
 
   - task: CopyFiles@2
