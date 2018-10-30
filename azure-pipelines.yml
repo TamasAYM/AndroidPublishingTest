@@ -54,6 +54,8 @@ jobs:
     vmImage: 'macOS 10.13'
   steps:
   - task: Gradle@2
+      KEYSTORE_PASSWORD: $(KEYSTORE_PASSWORD)
+      KEY_PASSWORD: $(KEY_PASSWORD)
     inputs:
       workingDirectory: ''
       gradleWrapperFile: 'gradlew'
