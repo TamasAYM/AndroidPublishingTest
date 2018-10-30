@@ -54,6 +54,7 @@ jobs:
     vmImage: 'macOS 10.13'
   steps:
   - task: Gradle@2
+    env:
       KEYSTORE_PASSWORD: $(KEYSTORE_PASSWORD)
       KEY_PASSWORD: $(KEY_PASSWORD)
     inputs:
