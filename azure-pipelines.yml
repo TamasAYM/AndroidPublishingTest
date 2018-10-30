@@ -1,3 +1,5 @@
+name: $(Build.DefinitionName)-$(SourceBranchName)_$(date:yyyyMMdd)$(rev:.r)
+
 jobs:
 - job: TestAndAnalyse
   pool:
