@@ -32,9 +32,19 @@ steps:
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'runUnitTests'
 
+- task: Gradle@2
+  inputs:
+    workingDirectory: ''
+    gradleWrapperFile: 'gradlew'
+    gradleOptions: '-Xmx3072m'
+    publishJUnitResults: false
+    tasks: 'jacocoMergedTestReport'
+
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: 'jaCoCo'
+    jacocoMergedTestReport: '$(System.DefaultWorkingDirectory)/app/**/jacocoMergedTestReport.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/app/build/reports/jacoco/jacocoMergedTestReport/html'
     additionalCodeCoverageFiles: 'build/jacoco/*.exec'
 
 - task: Gradle@2
