@@ -35,6 +35,7 @@ steps:
 - task: Gradle@2
   env:
     ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
+    AZURE_BRANCH: $(Build.SourceBranch)
   inputs:
     workingDirectory: ''
     gradleWrapperFile: 'gradlew'
