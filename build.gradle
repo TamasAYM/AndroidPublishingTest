@@ -8,11 +8,16 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
+		classpath 'org.jacoco:org.jacoco.core:0.8.2'
         
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
+}
+
+plugins {
+	id "org.sonarqube" version "2.6.2"
 }
 
 allprojects {
@@ -22,6 +27,24 @@ allprojects {
     }
 }
 
+
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+apply from: 'ci.gradle'
+
+sonarqube {
+	androidVariant 'envUsDebug'
+	properties {
+		property "sonar.organization", "TamasAYM"
+		property "sonar.projectKey", "AndroidPublishingTest"
+		property "sonar.projectName", "AndroidPublishingTest"
+		property "sonar.host.url", "https://sonarcloud.io"
+		property "sonar.login", System.getenv("ANDROID_SONAR_LOGIN")
+//		property "sonar.branch.name", System.getenv("AZURE_BRANCH") == null ? "master" : System.getenv("AZURE_BRANCH").replace("repo ", "")
+		property "sonar.sourceEncoding", "UTF-8"
+//		property "sonar.projectVersion", readVersionName(project)
+//		property "sonar.project.version", readVersionName(project)
+	}
 }

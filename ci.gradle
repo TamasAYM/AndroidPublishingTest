@@ -1,0 +1,118 @@
+import groovy.json.JsonSlurper
+
+//region CI TASKS
+
+task cleanAndInit {
+	dependsOn {
+		getCleanAndInitDependencyTasks()
+	}
+	doLast {
+		println "Successfully cleaned App"
+	}
+}
+
+def getCleanAndInitDependencyTasks() {
+	def dependencyTasks = []
+	for (project in allprojects) {
+		def cleanTask = project.tasks.findByName("clean")
+		if (cleanTask) {
+			dependencyTasks.add(cleanTask)
+		}
+	}
+	return dependencyTasks
+}
+
+task assembleAppForCI {
+	dependsOn {
+		[
+				project(':app').assembleEnvUsDebug
+		]
+	}
+}
+
+task runUnitTests {
+	dependsOn {
+		[
+				project(':app').runUnitTests
+		]
+
+	}
+	doLast {
+		println "Finished running unit tests from App"
+	}
+}
+
+task runUITests {
+	dependsOn {
+		project(':app').connectedEnvUsDebugAndroidTest
+	}
+}
+
+task sonarQubeForCI {
+	dependsOn {
+		project.tasks["sonarqube"]
+	}
+}
+
+task sonarPreview {
+	dependsOn {
+		[
+				setUpSonarForPreview,
+				project.tasks["sonarqube"]
+		]
+	}
+}
+
+task analyzeSonarReport {
+	dependsOn {
+		sonarPreview
+	}
+	doLast {
+		File report = new File("${buildDir}/sonar/sonar-report.json")
+		if (!report.exists()) {
+			throw new GradleException("Sonar report not found at: " + report.path)
+		}
+		def slurper = new JsonSlurper()
+		def json = slurper.parse(report)
+		def issues = json.issues
+		issues.each {
+			if (it."isNew") {
+				if (it."severity" == "MINOR" || it."severity" == "MAJOR" || it."severity" ==
+						"CRITICAL" || it."severity" == "BLOCKER") {
+					throw new GradleException("New severe Sonar issues found, aborting build. " +
+							"Please check the sonar issues html report to view them.")
+				}
+			}
+		}
+		println "No new sonar issues found, everything in order."
+	}
+}
+
+//endregion
+
+task setUpSonarForPreview {
+	doLast {
+		sonarqube {
+			androidVariant 'envUsDebug'
+			properties {
+				property "sonar.analysis.mode", "preview"
+				property "sonar.issuesReport.html.enable", true
+				property "sonar.report.export.path", "sonar-report.json"
+			}
+		}
+	}
+}
+
+project.tasks["sonarqube"].dependsOn {
+	[
+			project(':app').lintEnvUsDebug
+	]
+}
+
+project.tasks["sonarqube"].mustRunAfter {
+	[
+			project(':app').lintEnvUsDebug,
+			setUpSonarForPreview
+	]
+}
+

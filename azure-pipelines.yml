@@ -12,9 +12,33 @@ steps:
     workingDirectory: ''
     gradleWrapperFile: 'gradlew'
     gradleOptions: '-Xmx3072m'
+    publishJUnitResults: false
+    tasks: 'cleanAndInit'
+
+- task: Gradle@2
+  inputs:
+    workingDirectory: ''
+    gradleWrapperFile: 'gradlew'
+    gradleOptions: '-Xmx3072m'
+    tasks: 'assembleAppForCI'
+
+- task: Gradle@2
+  inputs:
+    workingDirectory: ''
+    gradleWrapperFile: 'gradlew'
+    gradleOptions: '-Xmx3072m'
     publishJUnitResults: true
     testResultsFiles: '**/TEST-*.xml'
-    tasks: 'assembleDebug testDebugUnitTest'
+    tasks: 'runUnitTests'
+
+- task: Gradle@2
+  env:
+    ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
+  inputs:
+    workingDirectory: ''
+    gradleWrapperFile: 'gradlew'
+    gradleOptions: '-Xmx3072m'
+    tasks: 'sonarqube'
 
 - task: CopyFiles@2
   inputs:
