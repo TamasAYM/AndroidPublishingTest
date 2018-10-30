@@ -1,4 +1,4 @@
-jobs: $(Build.DefinitionName)-$(SourceBranchName)_$(date:yyyyMMdd)
+jobs: $(Build.DefinitionName)
 - job: TestAndAnalyse
   pool:
     vmImage: 'macOS 10.13'
