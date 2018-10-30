@@ -98,6 +98,8 @@ jobs:
   cancelTimeoutInMinutes: 43200
   pool: server
   - task: ManualIntervention@8
+    inputs:
+      displayName: 'Approve hockey app'
 
   dependsOn: BuildArtifacts
 
