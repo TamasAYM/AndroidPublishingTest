@@ -32,4 +32,14 @@ public class Beer {
 		return 0;
 	}
 
+	public int getBeersChuggedWrongThree() {
+		try {
+			return beersChugged;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
 }
