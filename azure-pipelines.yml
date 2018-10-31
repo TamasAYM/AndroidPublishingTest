@@ -123,3 +123,8 @@ jobs:
   dependsOn: CheckEnvironmentInBranchName
   condition: succeeded()
 
+- job: ReportCI
+  pool:
+    vmImage: 'macOS 10.13'
+  dependsOn: CheckEnvironmentInBranchName
+  condition: failed()
