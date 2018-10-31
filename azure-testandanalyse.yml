@@ -1,0 +1,62 @@
+steps:
+  - task: Gradle@2
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      tasks: 'cleanAndInit'
+
+  - task: Gradle@2
+    displayName: Assemble app for CI
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      tasks: 'assembleAppForCI'
+
+  - task: Gradle@2
+    displayName: Run unit tests
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: true
+      testResultsFiles: '**/TEST-*.xml'
+      tasks: 'runUnitTests'
+
+  - task: Gradle@2
+    displayName: Sonar for master
+    env:
+      ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      tasks: 'sonarqube'
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+
+  - task: Gradle@2
+    displayName: Sonar preview
+    env:
+      ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
+      AZURE_BRANCH: $(Build.SourceBranchName)
+      GITHUB_SONAR_OAUTH: $(GITHUB_SONAR_OAUTH)
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      tasks: 'sonarqube -Dsonar.analysis.mode=preview -Dsonar.github.pullRequest=$(System.PullRequest.PullRequestNumber) -Dsonar.github.repository=TamasAYM/AndroidPublishingTest -Dsonar.github.oauth=$(GITHUB_SONAR_OAUTH)'
+    condition: and(always(), eq(variables['Build.Reason'], 'PullRequest'))
+
+  - task: CopyFiles@2
+    displayName: Copy reports
+    inputs:
+      contents: 'app/build/reports/**/*.*'
+      targetFolder: '$(build.artifactStagingDirectory)'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: '$(build.artifactStagingDirectory)'
+      artifactName: 'Reports'

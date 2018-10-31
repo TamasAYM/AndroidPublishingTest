@@ -24,7 +24,7 @@ task jacocoMergedTestReport(type: JacocoReport) {
 	setExecutionData(coverageFiles)
 
 	reports {
-		xml.enabled false
+		xml.enabled true
 		csv.enabled false
 		html.enabled true
 	}
@@ -47,13 +47,13 @@ task runUnitTests {
 	}
 }
 
-task buildAllReleaseBuilds {
+task buildAllBuilds {
 	dependsOn {
 		[
 				runUnitTests,
 				project(':app').tasks.findAll { task ->
 					task.name.startsWith("assemble") &&
-							task.name.endsWith("Release") &&
+							shouldBuildForBuildType(task) &&
 							shouldBuildForEnvironment(task)
 				}
 		]
@@ -64,7 +64,18 @@ task buildAllReleaseBuilds {
 		]
 	}
 	doLast {
-		println "All release builds have been built"
+		println "All builds have been built"
+	}
+}
+
+
+def shouldBuildForBuildType(task) {
+	if (!project.hasProperty("buildtype")) {
+		return task.name.contains("Release")
+	}
+	def buildTypes = buildtype.split(',')
+	return buildTypes.any { buildType ->
+		task.name.contains(buildType.capitalize())
 	}
 }
 
@@ -78,20 +89,21 @@ def shouldBuildForEnvironment(task) {
 	}
 }
 
+
 // configure the mapping artifacts, namely adding the renamed file to the artifact,
 // only adding those of environments in the environment variable
 // Renaming e.g.: (envUs/release/)mapping.txt --> mapping-us.txt
 task configureMappingArtifacts() {
 	dependsOn {
-		buildAllReleaseBuilds
+		buildAllBuilds
 	}
 	mustRunAfter {
-		buildAllReleaseBuilds
+		buildAllBuilds
 	}
 	doLast {
 		def fromPath = "${buildDir}${File.separator}outputs${File.separator}mapping"
 		fileTree(fromPath).include('**/mapping.txt').files.each { each ->
-			def newName = each.name.take(each.name.lastIndexOf('.')) + '-' + each.parentFile.parentFile.name.toLowerCase() + '.txt'
+			def newName = each.name.take(each.name.lastIndexOf('.')) + '-' + each.parentFile.parentFile.name.toLowerCase() + '-' + each.parentFile.name.toLowerCase() + '.txt'
 			newName = newName.replaceAll('mapping-env', 'mapping-')
 			each.renameTo("${fromPath}${File.separator}${newName}")
 		}
@@ -100,24 +112,55 @@ task configureMappingArtifacts() {
 
 // configure the apk artifacts, namely adding the renamed file to the artifact,
 // only adding those of environments in the environment variable 
-// Renaming e.g.: app-envUs-release.apk --> pampers-us-release.apk
+// Renaming e.g.: app-envUs-release.apk --> app-us-release.apk
 task configureApkArtifacts() {
 	dependsOn {
 		[
-				buildAllReleaseBuilds
+				buildAllBuilds
 		]
 	}
 	mustRunAfter {
 		[
-				buildAllReleaseBuilds
+				buildAllBuilds
 		]
 	}
 	doLast {
 		def fromPath = "${buildDir}${File.separator}outputs${File.separator}apk"
-		fileTree(fromPath).include('**/**-release.apk').files.each { each ->
+		fileTree(fromPath).include('**/**.apk').files.each { each ->
 			def newName = each.name.toLowerCase()
-			newName = newName.replaceAll('app-env', 'pampers-')
+			newName = newName.replaceAll('app-env', 'app-')
 			each.renameTo("${fromPath}${File.separator}${newName}")
+		}
+	}
+}
+
+
+static def gitBranch() {
+	def branch = ""
+	def process = "git rev-parse --abbrev-ref HEAD".execute()
+	process.in.eachLine { line -> branch = line }
+	process.err.eachLine { line -> println line }
+	process.waitFor()
+	branch
+}
+
+task shouldBuildForBranch() {
+	doLast {
+		def branch = gitBranch()
+		if (branch.equals("HEAD")) {
+			branch = System.getenv("BRANCH_NAME")
+		}
+		if (!project.hasProperty("environment")) {
+			return true
+		}
+		def environments = environment.split(',')
+		boolean foundMatchingEnvInBranchName = environments.any { env ->
+			branch.contains("/" + env + "/")
+		}
+
+		if (!foundMatchingEnvInBranchName) {
+			throw new GradleException('No matching environment found in branch name environment ' +
+					'property was:' + environment + " branch was: " + branch)
 		}
 	}
 }

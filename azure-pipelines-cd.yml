@@ -1,0 +1,92 @@
+name: $(Build.DefinitionName)-$(SourceBranchName)_$(date:yyyyMMdd)$(rev:.r)
+
+trigger:
+  branches:
+    include:
+    - master
+    - releases/*
+    - hotfix/*
+
+jobs:
+
+- job: CheckEnvironmentInBranchName
+  pool:
+    vmImage: 'macOS 10.13'
+  steps:
+  - task: Gradle@2
+    displayName: Check environment in branch name
+    env:
+      ENVIRONMENT_FILTER: $(ENVIRONMENT_FILTER)
+      BRANCH_NAME: $(Build.SourceBranch)
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      tasks: 'shouldBuildForBranch -Penvironment=$(ENVIRONMENT_FILTER)'
+    condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+
+
+- job: TestAndAnalyse
+  pool:
+    vmImage: 'macOS 10.13'
+  steps:
+  - template: azure-testandanalyse.yml
+  dependsOn: CheckEnvironmentInBranchName
+  condition: succeeded()
+
+- job: BuildArtifacts
+  pool:
+    vmImage: 'macOS 10.13'
+  steps:
+  - task: Gradle@2
+    displayName: Build
+    env:
+      KEYSTORE_PASSWORD: $(KEYSTORE_PASSWORD)
+      KEY_PASSWORD: $(KEY_PASSWORD)
+      ENVIRONMENT_FILTER: $(ENVIRONMENT_FILTER)
+      BUILD_TYPE_FILTER: $(BUILD_TYPE_FILTER)
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      tasks: 'configureMappingArtifacts configureApkArtifacts -Penvironment=$(ENVIRONMENT_FILTER) -Pbuildtype=$(BUILD_TYPE_FILTER)'
+    condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+
+  - task: Gradle@2
+    displayName: Build release builds on master
+    env:
+      KEYSTORE_PASSWORD: $(KEYSTORE_PASSWORD)
+      KEY_PASSWORD: $(KEY_PASSWORD)
+      ENVIRONMENT_FILTER: $(ENVIRONMENT_FILTER)
+      BUILD_TYPE_FILTER: $(BUILD_TYPE_FILTER)
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      tasks: 'configureMappingArtifacts configureApkArtifacts'
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+
+  - task: CopyFiles@2
+    displayName: Copy apk
+    inputs:
+      contents: '**/*.apk'
+      targetFolder: '$(build.artifactStagingDirectory)'
+
+  - task: CopyFiles@2
+    displayName: Copy mapping
+    inputs:
+      contents: '**/mapping-*.txt'
+      targetFolder: '$(build.artifactStagingDirectory)'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: '$(build.artifactStagingDirectory)'
+      artifactName: 'BuildArtifacts'
+  dependsOn: TestAndAnalyse
+  condition: succeeded()
+
+
+

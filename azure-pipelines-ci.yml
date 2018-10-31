@@ -1,0 +1,17 @@
+name: $(Build.DefinitionName)-$(SourceBranchName)_$(date:yyyyMMdd)$(rev:.r)
+
+trigger:
+  branches:
+    include:
+    - feature/*
+    exclude:
+    - master
+    - releases/*
+    - hotfix/*
+
+jobs:
+- job: TestAndAnalyse
+  pool:
+    vmImage: 'macOS 10.13'
+  steps:
+  - template: azure-testandanalyse.yml
