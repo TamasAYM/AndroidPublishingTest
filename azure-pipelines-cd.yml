@@ -77,7 +77,7 @@ jobs:
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
       tasks: 'configureMappingArtifacts configureApkArtifacts'
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'),  eq(variables['SHOULD_BUILD_MASTER'], 'true'))
 
   - task: CopyFiles@2
     displayName: Copy apk
