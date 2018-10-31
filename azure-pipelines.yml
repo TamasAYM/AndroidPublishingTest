@@ -5,6 +5,7 @@ trigger:
     include:
     - master
     - releases/*
+    - hotfix/*
 
 jobs:
 - job: TestAndAnalyse
