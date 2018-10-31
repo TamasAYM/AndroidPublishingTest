@@ -71,6 +71,7 @@ jobs:
 #      pathToPublish: '$(build.artifactStagingDirectory)'
 #      artifactName: 'Reports'
 
+
 - job: CheckEnvironmentInBranchName
   pool:
     vmImage: 'macOS 10.13'
