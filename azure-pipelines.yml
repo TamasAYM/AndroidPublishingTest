@@ -6,6 +6,7 @@ trigger:
     - master
     - releases/*
     - hotfix/*
+    - feature/*
 
 jobs:
 - job: TestAndAnalyse
