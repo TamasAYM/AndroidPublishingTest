@@ -38,7 +38,7 @@ sonarqube {
 	androidVariant 'envUsDebug'
 	properties {
 		property "sonar.organization", "tamasaym-github"
-		property "sonar.projectKey", "AndroidPublishingTest"
+		property "sonar.projectKey", "TamasAYM_AndroidPublishingTest"
 		property "sonar.projectName", "AndroidPublishingTest"
 		property "sonar.host.url", "https://sonarcloud.io"
 		property "sonar.login", System.getenv("ANDROID_SONAR_LOGIN")
