@@ -48,7 +48,7 @@ steps:
       workingDirectory: ''
       gradleWrapperFile: 'gradlew'
       gradleOptions: '-Xmx3072m'
-      tasks: 'sonarqube sonar.pullrequest.provider=github -Dsonar.pullrequest.branch=$(Build.SourceBranchName) -Dsonar.pullrequest.key=$(System.PullRequest.PullRequestNumber) -Dsonar.pullrequest.github.repository=TamasAYM/AndroidPublishingTest -Dsonar.pullrequest.github.endpoint="https://api.github.com/"'
+      tasks: 'sonarqube -Dsonar.pullrequest.provider=github -Dsonar.pullrequest.branch=$(Build.SourceBranchName) -Dsonar.pullrequest.key=$(System.PullRequest.PullRequestNumber) -Dsonar.pullrequest.github.repository=TamasAYM/AndroidPublishingTest -Dsonar.pullrequest.github.endpoint="https://api.github.com/"'
     condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
 
   - task: CopyFiles@2
