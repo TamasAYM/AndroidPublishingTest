@@ -78,6 +78,7 @@ jobs:
   - task: Gradle@2
     env:
       ENVIRONMENT_FILTER: $(ENVIRONMENT_FILTER)
+      BRANCH_NAME: $(Build.SourceBranch)
     inputs:
       workingDirectory: ''
       gradleWrapperFile: 'gradlew'

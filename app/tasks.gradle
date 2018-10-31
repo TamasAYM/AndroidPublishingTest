@@ -147,6 +147,9 @@ static def gitBranch() {
 task shouldBuildForBranch() {
 	doLast {
 		def branch = gitBranch()
+		if (branch.equals("HEAD")) {
+			branch = System.getenv("BRANCH_NAME")
+		}
 		if (!project.hasProperty("environment")) {
 			return true
 		}
