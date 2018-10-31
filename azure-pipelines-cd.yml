@@ -45,7 +45,7 @@ jobs:
       KEYSTORE_ENCRYPTION_KEY: $(KEYSTORE_ENCRYPTION_KEY)
     inputs:
       cipher: 'des3'
-      inFile: '/etc/dev-new.jks'
+      inFile: '$(System.DefaultWorkingDirectory)/etc/dev-new.jks'
       passphrase: $(KEYSTORE_ENCRYPTION_KEY)
 
   - task: Gradle@2
