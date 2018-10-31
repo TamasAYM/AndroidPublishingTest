@@ -4,6 +4,10 @@ trigger:
   branches:
     include:
     - feature/*
+    exclide:
+    - master
+    - releases/*
+    - hotfix/*
 
 jobs:
 - job: TestAndAnalyse
