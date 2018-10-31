@@ -42,4 +42,24 @@ public class Beer {
 		return 0;
 	}
 
+	public int getBeersChuggedWrongFour() {
+		try {
+			return beersChugged;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	public int getBeersChuggedWrongFive() {
+		try {
+			return beersChugged;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
 }

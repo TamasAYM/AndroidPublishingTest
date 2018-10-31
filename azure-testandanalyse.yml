@@ -1,5 +1,6 @@
 steps:
   - task: Gradle@2
+    displayName: Clean and init
     inputs:
       workingDirectory: ''
       gradleWrapperFile: 'gradlew'
@@ -47,8 +48,8 @@ steps:
       workingDirectory: ''
       gradleWrapperFile: 'gradlew'
       gradleOptions: '-Xmx3072m'
-      tasks: 'sonarqube -Dsonar.analysis.mode=preview -Dsonar.github.pullRequest=$(System.PullRequest.PullRequestNumber) -Dsonar.github.repository=TamasAYM/AndroidPublishingTest -Dsonar.github.oauth=$(GITHUB_SONAR_OAUTH)'
-    condition: and(always(), eq(variables['Build.Reason'], 'PullRequest'))
+      tasks: 'sonarqube -Dsonar.pullrequest.provider=github -Dsonar.pullrequest.branch=$(Build.SourceBranchName) -Dsonar.pullrequest.key=$(System.PullRequest.PullRequestNumber) -Dsonar.pullrequest.github.repository=TamasAYM/AndroidPublishingTest -Dsonar.pullrequest.github.endpoint="https://api.github.com/"'
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
 
   - task: CopyFiles@2
     displayName: Copy reports
