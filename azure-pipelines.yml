@@ -1,5 +1,11 @@
 name: $(Build.DefinitionName)-$(SourceBranchName)_$(date:yyyyMMdd)$(rev:.r)
 
+trigger:
+  branches:
+    include:
+    - master
+    - releases/*
+
 jobs:
 - job: TestAndAnalyse
   pool:
