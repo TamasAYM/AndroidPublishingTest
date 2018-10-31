@@ -47,13 +47,13 @@ task runUnitTests {
 	}
 }
 
-task buildAllReleaseBuilds {
+task buildAllBuilds {
 	dependsOn {
 		[
 				runUnitTests,
 				project(':app').tasks.findAll { task ->
 					task.name.startsWith("assemble") &&
-							task.name.endsWith("Release") &&
+							shouldBuildForBuildType(task) &&
 							shouldBuildForEnvironment(task)
 				}
 		]
@@ -64,7 +64,18 @@ task buildAllReleaseBuilds {
 		]
 	}
 	doLast {
-		println "All release builds have been built"
+		println "All builds have been built"
+	}
+}
+
+
+def shouldBuildForBuildType(task) {
+	if (!project.hasProperty("buildtype")) {
+		return task.name.contains("Release")
+	}
+	def buildTypes = buildtype.split(',')
+	return buildTypes.any { buildType ->
+		task.name.contains(buildType.capitalize())
 	}
 }
 
@@ -83,15 +94,15 @@ def shouldBuildForEnvironment(task) {
 // Renaming e.g.: (envUs/release/)mapping.txt --> mapping-us.txt
 task configureMappingArtifacts() {
 	dependsOn {
-		buildAllReleaseBuilds
+		buildAllBuilds
 	}
 	mustRunAfter {
-		buildAllReleaseBuilds
+		buildAllBuilds
 	}
 	doLast {
 		def fromPath = "${buildDir}${File.separator}outputs${File.separator}mapping"
 		fileTree(fromPath).include('**/mapping.txt').files.each { each ->
-			def newName = each.name.take(each.name.lastIndexOf('.')) + '-' + each.parentFile.parentFile.name.toLowerCase() + '.txt'
+			def newName = each.name.take(each.name.lastIndexOf('.')) + '-' + each.parentFile.parentFile.name.toLowerCase() + '-' + each.parentFile.name.toLowerCase() + '.txt'
 			newName = newName.replaceAll('mapping-env', 'mapping-')
 			each.renameTo("${fromPath}${File.separator}${newName}")
 		}
@@ -104,17 +115,17 @@ task configureMappingArtifacts() {
 task configureApkArtifacts() {
 	dependsOn {
 		[
-				buildAllReleaseBuilds
+				buildAllBuilds
 		]
 	}
 	mustRunAfter {
 		[
-				buildAllReleaseBuilds
+				buildAllBuilds
 		]
 	}
 	doLast {
 		def fromPath = "${buildDir}${File.separator}outputs${File.separator}apk"
-		fileTree(fromPath).include('**/**-release.apk').files.each { each ->
+		fileTree(fromPath).include('**/**.apk').files.each { each ->
 			def newName = each.name.toLowerCase()
 			newName = newName.replaceAll('app-env', 'app-')
 			each.renameTo("${fromPath}${File.separator}${newName}")
