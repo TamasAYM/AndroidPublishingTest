@@ -89,6 +89,7 @@ def shouldBuildForEnvironment(task) {
 	}
 }
 
+
 // configure the mapping artifacts, namely adding the renamed file to the artifact,
 // only adding those of environments in the environment variable
 // Renaming e.g.: (envUs/release/)mapping.txt --> mapping-us.txt
@@ -129,6 +130,34 @@ task configureApkArtifacts() {
 			def newName = each.name.toLowerCase()
 			newName = newName.replaceAll('app-env', 'app-')
 			each.renameTo("${fromPath}${File.separator}${newName}")
+		}
+	}
+}
+
+
+static def gitBranch() {
+	def branch = ""
+	def process = "git rev-parse --abbrev-ref HEAD".execute()
+	process.in.eachLine { line -> branch = line }
+	process.err.eachLine { line -> println line }
+	process.waitFor()
+	branch
+}
+
+task shouldBuildForBranch() {
+	doLast {
+		def branch = gitBranch()
+		if (!project.hasProperty("environment")) {
+			return true
+		}
+		def environments = environment.split(',')
+		boolean foundMatchingEnvInBranchName = environments.any { env ->
+			branch.contains("/" + env + "/")
+		}
+
+		if (!foundMatchingEnvInBranchName) {
+			throw new GradleException('No matching environment found in branch name environment ' +
+					'property was:' + environment + " branch was: " + branch)
 		}
 	}
 }

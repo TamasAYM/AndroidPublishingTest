@@ -71,6 +71,21 @@ jobs:
 #      pathToPublish: '$(build.artifactStagingDirectory)'
 #      artifactName: 'Reports'
 
+- job: CheckEnvironmentInBranchName
+  pool:
+    vmImage: 'macOS 10.13'
+  steps:
+  - task: Gradle@2
+    env:
+      ENVIRONMENT_FILTER: $(ENVIRONMENT_FILTER)
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      tasks: 'shouldBuildForBranch -Penvironment=$(ENVIRONMENT_FILTER)'
+  dependsOn: TestAndAnalyse
+  condition: succeeded()
 
 - job: BuildArtifacts
   pool:
@@ -103,6 +118,6 @@ jobs:
     inputs:
       pathToPublish: '$(build.artifactStagingDirectory)'
       artifactName: 'BuildArtifacts'
-  dependsOn: TestAndAnalyse
-  condition: and(succeeded(), or(contains(variables['Build.SourceBranch'], 'master'), contains(variables['Build.SourceBranch'], 'releases'), contains(variables['Build.SourceBranch'], 'hotfix')))
+  dependsOn: CheckEnvironmentInBranchName
+  condition: succeeded()
 
