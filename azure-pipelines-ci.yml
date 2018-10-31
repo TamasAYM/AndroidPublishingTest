@@ -15,4 +15,4 @@ jobs:
     vmImage: 'macOS 10.13'
 
   steps:
-  - template: testandanalyse.yml
+  - template: azure-testandanalyse.yml
