@@ -71,7 +71,6 @@ jobs:
 #      pathToPublish: '$(build.artifactStagingDirectory)'
 #      artifactName: 'Reports'
 
-
 - job: BuildArtifacts
   pool:
     vmImage: 'macOS 10.13'
