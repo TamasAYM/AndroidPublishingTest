@@ -67,6 +67,7 @@ jobs:
   - task: Gradle@2
     displayName: Build release builds on master
     env:
+      KEYSTORE_KEY_ALIAS: $(KEYSTORE_KEY_ALIAS)
       KEYSTORE_PASSWORD: $(KEYSTORE_PASSWORD)
       KEY_PASSWORD: $(KEY_PASSWORD)
       ENVIRONMENT_FILTER: $(ENVIRONMENT_FILTER)
