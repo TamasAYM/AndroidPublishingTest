@@ -28,6 +28,7 @@ android {
 	flavorDimensions 'environment'
 
 	productFlavors {
+
 		// Includes settings you want to keep only while developing your app.
 		envUs {
 			dimension 'environment'
