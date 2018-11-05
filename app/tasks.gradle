@@ -54,7 +54,7 @@ task buildAllBuilds {
 				project(':app').tasks.findAll { task ->
 					task.name.startsWith("assemble") &&
 							shouldBuildForBuildType(task) &&
-							shouldBuildForEnvironment(task)
+							shouldBuildBranchForInput(task)
 				}
 		]
 	}
@@ -78,17 +78,6 @@ def shouldBuildForBuildType(task) {
 		task.name.contains(buildType.capitalize())
 	}
 }
-
-def shouldBuildForEnvironment(task) {
-	if (!project.hasProperty("environment")) {
-		return task.name.contains("Env")
-	}
-	def environments = environment.split(',')
-	return environments.any { env ->
-		task.name.contains("Env" + env.capitalize())
-	}
-}
-
 
 // configure the mapping artifacts, namely adding the renamed file to the artifact,
 // only adding those of environments in the environment variable
@@ -144,23 +133,39 @@ static def gitBranch() {
 	branch
 }
 
-task shouldBuildForBranch() {
-	doLast {
-		def branch = gitBranch()
-		if (branch.equals("HEAD")) {
-			branch = System.getenv("BRANCH_NAME")
-		}
-		if (!project.hasProperty("environment")) {
-			return true
-		}
-		def environments = environment.split(',')
-		boolean foundMatchingEnvInBranchName = environments.any { env ->
+static def shouldBuildBranchForInput(task) {
+	String branch = getBranch()
+	if (branch == "master") {
+		return true
+	}
+	// this needs to match the app's environment build flavor dimension
+	def environments = "us,ca,uk,de".split(',')
+	boolean foundMatchingEnvInBranchName = environments.any { env ->
+		if (task == null) {
 			branch.contains("/" + env + "/")
 		}
+		else {
+			task.name.contains("Env" + env.capitalize()) && branch.contains("/" + env + "/")
+		}
+	}
+	return foundMatchingEnvInBranchName
+}
+
+static String getBranch() {
+	def branch = gitBranch()
+	if (branch == "HEAD") {
+		branch = System.getenv("BRANCH_NAME")
+	}
+	branch
+}
+
+task shouldBuildForBranch() {
+	doLast {
+		boolean foundMatchingEnvInBranchName = shouldBuildBranchForInput(null)
 
 		if (!foundMatchingEnvInBranchName) {
 			throw new GradleException('No matching environment found in branch name environment ' +
-					'property was:' + environment + " branch was: " + branch)
+					'branch was: ' + getBranch())
 		}
 	}
 }
