@@ -43,7 +43,6 @@ steps:
     env:
       ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
       AZURE_BRANCH: $(Build.SourceBranchName)
-      GITHUB_SONAR_OAUTH: $(GITHUB_SONAR_OAUTH)
     inputs:
       workingDirectory: ''
       gradleWrapperFile: 'gradlew'
