@@ -22,6 +22,7 @@ android {
 			keyAlias System.getenv("KEYSTORE_KEY_ALIAS")
 			storePassword System.getenv("KEYSTORE_PASSWORD")
 			keyPassword System.getenv("KEY_PASSWORD")
+
 		}
 	}
 	flavorDimensions 'environment'
