@@ -54,6 +54,7 @@ jobs:
       KEYSTORE_PASSWORD: $(KEYSTORE_PASSWORD)
       KEY_PASSWORD: $(KEY_PASSWORD)
       BUILD_TYPE_FILTER: $(BUILD_TYPE_FILTER)
+      BRANCH_NAME: $(Build.SourceBranch)
     inputs:
       workingDirectory: ''
       gradleWrapperFile: 'gradlew'
@@ -69,6 +70,7 @@ jobs:
       KEYSTORE_PASSWORD: $(KEYSTORE_PASSWORD)
       KEY_PASSWORD: $(KEY_PASSWORD)
       BUILD_TYPE_FILTER: $(BUILD_TYPE_FILTER)
+      BRANCH_NAME: $(Build.SourceBranch)
     inputs:
       workingDirectory: ''
       gradleWrapperFile: 'gradlew'

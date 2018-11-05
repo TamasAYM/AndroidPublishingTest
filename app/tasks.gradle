@@ -135,7 +135,7 @@ static def gitBranch() {
 
 static def shouldBuildBranchForInput(task) {
 	String branch = getBranch()
-	if (branch == "master") {
+	if (branch == "master" || branch == 'refs/heads/master') {
 		return true
 	}
 	println branch
