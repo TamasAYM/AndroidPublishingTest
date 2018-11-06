@@ -60,6 +60,7 @@ android {
 			signingConfig signingConfigs.release
 		}
     }
+
 }
 
 apply from: 'tasks.gradle'
