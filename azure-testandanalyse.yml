@@ -1,5 +1,9 @@
 steps:
-  - bash: echo $VERSION_COUNTER
+  - task: Bash@3
+    displayName: version counter
+    env:
+      VERSION_COUNTER: $(VERSION_COUNTER)
+    script: echo $VERSION_COUNTER
   - task: Gradle@2
     displayName: Clean and init
     inputs:
