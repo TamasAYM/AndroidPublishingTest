@@ -1,5 +1,8 @@
 name: $(Build.DefinitionName)-$(SourceBranchName)_$(date:yyyyMMdd)$(rev:.r)
 
+variables:
+  versionCounter: $[counter('versioncounter', 100)]
+
 trigger:
   branches:
     include:
