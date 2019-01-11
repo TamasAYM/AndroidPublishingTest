@@ -3,7 +3,7 @@ steps:
     displayName: version counter
     inputs:
       targetType: inline
-      script: echo $versionCounter
+      script: echo $versionCounter; echo $VERSIONCOUNTER
   - task: Gradle@2
     displayName: Clean and init
     inputs:
