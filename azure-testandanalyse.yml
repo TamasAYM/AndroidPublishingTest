@@ -1,5 +1,5 @@
 steps:
-  - bash: echo VERSION_COUNTER
+  - bash: echo $VERSION_COUNTER
   - task: Gradle@2
     displayName: Clean and init
     inputs:
