@@ -1,14 +1,12 @@
 variables:
-  VERSION_COUNTER: $[counter('versioncounter', 100)]
+  versionCounter: $[counter('versioncounter', 100)]
 
 steps:
   - task: Bash@3
     displayName: version counter
-    env:
-      VERSION_COUNTER: $(VERSION_COUNTER)
     inputs:
       targetType: inline
-      script: echo $VERSION_COUNTER
+      script: echo $versionCounter
   - task: Gradle@2
     displayName: Clean and init
     inputs:
