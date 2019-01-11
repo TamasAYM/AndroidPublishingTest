@@ -1,9 +1,12 @@
 steps:
   - task: Bash@3
     displayName: version number
+    env:
+      DATE_PART: $(date:yyyyMMdd)
+      REVISION_PART: $(rev:r)
     inputs:
       targetType: inline
-      script: echo $(date:yyyyMMdd)$(rev:r)
+      script: echo $DATE_PART$REVISION_PART
   - task: Gradle@2
     displayName: Clean and init
     inputs:
