@@ -1,9 +1,9 @@
 steps:
   - task: Bash@3
-    displayName: version counter
+    displayName: version number
     inputs:
       targetType: inline
-      script: echo $versionCounter; echo $VERSIONCOUNTER
+      script: echo $(date:yyyyMMdd)$(rev:r)
   - task: Gradle@2
     displayName: Clean and init
     inputs:
