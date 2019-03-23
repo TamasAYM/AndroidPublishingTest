@@ -3,8 +3,7 @@ steps:
     displayName: branch name
     inputs:
       targetType: inline
-      script: echo "SourceBranchName"; echo $(Build.SourceBranchName); echo "SourceBranch"; echo $(Build.SourceBranch); echo "Build.Reason"; echo $(Build.Reason)
-
+      script: echo "SourceBranchName"; echo $(Build.SourceBranchName); echo "SourceBranch"; echo $(Build.SourceBranch); echo "Build.Reason"; echo $(Build.Reason); echo "System.PullRequest.SourceBranch"; echo $(System.PullRequest.SourceBranch)
 #  - task: Bash@3
 #    displayName: version number
 #    env:
