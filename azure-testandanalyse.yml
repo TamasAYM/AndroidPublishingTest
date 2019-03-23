@@ -1,70 +1,75 @@
 steps:
   - task: Bash@3
-    displayName: version number
-    env:
-      DATE_PART: $(date:yyyyMMdd)
-      REVISION_PART: $(rev:r)
-    inputs:
-      targetType: inline
-      script: echo $DATE_PART$REVISION_PART
-  - task: Gradle@2
-    displayName: Clean and init
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      gradleOptions: '-Xmx3072m'
-      publishJUnitResults: false
-      tasks: 'cleanAndInit'
-
-  - task: Gradle@2
-    displayName: Assemble app for CI
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      gradleOptions: '-Xmx3072m'
-      publishJUnitResults: false
-      tasks: 'assembleAppForCI'
-
-  - task: Gradle@2
-    displayName: Run unit tests
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      gradleOptions: '-Xmx3072m'
-      publishJUnitResults: true
-      testResultsFiles: '**/TEST-*.xml'
-      tasks: 'runUnitTests'
-
-  - task: Gradle@2
-    displayName: Sonar for master
-    env:
-      ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      gradleOptions: '-Xmx3072m'
-      tasks: 'sonarqube'
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-
-  - task: Gradle@2
-    displayName: Sonar preview
-    env:
-      ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
-      AZURE_BRANCH: $(Build.SourceBranchName)
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      gradleOptions: '-Xmx3072m'
-      tasks: 'sonarqube -Dsonar.pullrequest.provider=github -Dsonar.pullrequest.branch=$(Build.SourceBranchName) -Dsonar.pullrequest.key=$(System.PullRequest.PullRequestNumber) -Dsonar.pullrequest.github.repository=TamasAYM/AndroidPublishingTest -Dsonar.pullrequest.github.endpoint="https://api.github.com/"'
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
-
-  - task: CopyFiles@2
-    displayName: Copy reports
-    inputs:
-      contents: 'app/build/reports/**/*.*'
-      targetFolder: '$(build.artifactStagingDirectory)'
-
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathToPublish: '$(build.artifactStagingDirectory)'
-      artifactName: 'Reports'
+  displayName: branch name
+  inputs:
+    targetType: inline
+    script: echo "SourceBranchName"; echo $(Build.SourceBranchName); echo "SourceBranch"; echo $(Build.SourceBranch);
+#  - task: Bash@3
+#    displayName: version number
+#    env:
+#      DATE_PART: $(date:yyyyMMdd)
+#      REVISION_PART: $(rev:r)
+#    inputs:
+#      targetType: inline
+#      script: echo $DATE_PART$REVISION_PART
+#  - task: Gradle@2
+#    displayName: Clean and init
+#    inputs:
+#      workingDirectory: ''
+#      gradleWrapperFile: 'gradlew'
+#      gradleOptions: '-Xmx3072m'
+#      publishJUnitResults: false
+#      tasks: 'cleanAndInit'
+#
+#  - task: Gradle@2
+#    displayName: Assemble app for CI
+#    inputs:
+#      workingDirectory: ''
+#      gradleWrapperFile: 'gradlew'
+#      gradleOptions: '-Xmx3072m'
+#      publishJUnitResults: false
+#      tasks: 'assembleAppForCI'
+#
+#  - task: Gradle@2
+#    displayName: Run unit tests
+#    inputs:
+#      workingDirectory: ''
+#      gradleWrapperFile: 'gradlew'
+#      gradleOptions: '-Xmx3072m'
+#      publishJUnitResults: true
+#      testResultsFiles: '**/TEST-*.xml'
+#      tasks: 'runUnitTests'
+#
+#  - task: Gradle@2
+#    displayName: Sonar for master
+#    env:
+#      ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
+#    inputs:
+#      workingDirectory: ''
+#      gradleWrapperFile: 'gradlew'
+#      gradleOptions: '-Xmx3072m'
+#      tasks: 'sonarqube'
+#    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#
+#  - task: Gradle@2
+#    displayName: Sonar preview
+#    env:
+#      ANDROID_SONAR_LOGIN: $(ANDROID_SONAR_LOGIN)
+#      AZURE_BRANCH: $(Build.SourceBranchName)
+#    inputs:
+#      workingDirectory: ''
+#      gradleWrapperFile: 'gradlew'
+#      gradleOptions: '-Xmx3072m'
+#      tasks: 'sonarqube -Dsonar.pullrequest.provider=github -Dsonar.pullrequest.branch=$(Build.SourceBranchName) -Dsonar.pullrequest.key=$(System.PullRequest.PullRequestNumber) -Dsonar.pullrequest.github.repository=TamasAYM/AndroidPublishingTest -Dsonar.pullrequest.github.endpoint="https://api.github.com/"'
+#    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+#
+#  - task: CopyFiles@2
+#    displayName: Copy reports
+#    inputs:
+#      contents: 'app/build/reports/**/*.*'
+#      targetFolder: '$(build.artifactStagingDirectory)'
+#
+#  - task: PublishBuildArtifacts@1
+#    inputs:
+#      pathToPublish: '$(build.artifactStagingDirectory)'
+#      artifactName: 'Reports'
