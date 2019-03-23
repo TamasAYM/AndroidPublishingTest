@@ -4,6 +4,7 @@ steps:
     inputs:
       targetType: inline
       script: echo "SourceBranchName"; echo $(Build.SourceBranchName); echo "SourceBranch"; echo $(Build.SourceBranch);
+
 #  - task: Bash@3
 #    displayName: version number
 #    env:
