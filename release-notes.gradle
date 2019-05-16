@@ -82,7 +82,7 @@ class Version {
 				"hash='" + hash + '\'' +
 				", version='" + version + '\'' +
 				", tags=" + tags +
-				'}';
+				'}'
 	}
 }
 
