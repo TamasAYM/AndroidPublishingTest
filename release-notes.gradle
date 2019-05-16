@@ -49,7 +49,7 @@ task createReleaseNotes() {
 			releaseNotes.append "$n-------------------------------------"
 			releaseNotes.append "$n\tVersion: $title"
 			releaseNotes.append "$n\tHash: $version.hash"
-			releaseNotes.append "$n\tChange set: $changeSet"
+			releaseNotes.append "$n\tTags: $version.tags"
 			releaseNotes.append "$n-------------------------------------"
 			releaseNotes.append "$n#####################################"
 			releaseNotes.append "\n"
