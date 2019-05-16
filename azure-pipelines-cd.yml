@@ -60,7 +60,7 @@ jobs:
       gradleWrapperFile: 'gradlew'
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
-      tasks: 'configureMappingArtifacts configureApkArtifacts createReleaseNotes -Pbuildtype=$(BUILD_TYPE_FILTER)'
+      tasks: 'configureMappingArtifacts configureApkArtifacts -Pbuildtype=$(BUILD_TYPE_FILTER)'
     condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
 
   - task: Gradle@2
@@ -76,8 +76,18 @@ jobs:
       gradleWrapperFile: 'gradlew'
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
-      tasks: 'configureMappingArtifacts configureApkArtifacts createReleaseNotes'
+      tasks: 'configureMappingArtifacts configureApkArtifacts'
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'),  eq(variables['SHOULD_BUILD_MASTER'], 'true'))
+
+  - task: Gradle@2
+    displayName: Release notes
+    inputs:
+      workingDirectory: ''
+      gradleWrapperFile: 'gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      tasks: 'createReleaseNotes'
+    condition: succeeded()
 
   - task: CopyFiles@2
     displayName: Copy apk
