@@ -123,7 +123,6 @@ task configureApkArtifacts() {
 	}
 }
 
-
 static def gitBranch() {
 	def branch = ""
 	def process = "git rev-parse --abbrev-ref HEAD".execute()
@@ -133,14 +132,16 @@ static def gitBranch() {
 	branch
 }
 
-static def shouldBuildBranchForInput(task) {
+apply from: '../build_constants.gradle'
+
+def shouldBuildBranchForInput(task) {
 	String branch = getBranch()
 	if (branch == "master" || branch == 'refs/heads/master') {
 		return true
 	}
 	println branch
 	// this needs to match the app's environment build flavor dimension
-	def environments = "us,ca,uk,de".split(',')
+	def environments = project.availableMarkets
 	boolean foundMatchingEnvInBranchName = environments.any { env ->
 		if (task == null) {
 			branch.contains("/" + env + "/")
