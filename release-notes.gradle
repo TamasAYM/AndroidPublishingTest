@@ -174,7 +174,7 @@ def getVersions() {
 def getChangesBetweenTags(changeSet) {
 	def stdout = new ByteArrayOutputStream()
 	exec {
-		commandLine "git", "log", "--pretty=format:'%s'", changeSet
+		commandLine "git", "log", "--merges", "--pretty=format:'%s'", changeSet
 		standardOutput = stdout
 	}
 	def output = stdout.toString()
