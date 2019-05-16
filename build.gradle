@@ -32,6 +32,7 @@ task clean(type: Delete) {
 }
 
 apply from: 'ci.gradle'
+apply from: 'versioning.gradle'
 
 sonarqube {
 	androidVariant 'envUsDebug'
