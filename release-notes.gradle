@@ -1,0 +1,183 @@
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.util.regex.Pattern
+
+/**
+ * This is a gradle task that will generate release notes. Every time the app is published a tag is
+ * created, this task will get the changeset between the head and the last tag, and
+ * after that between all other tags to generate a changeset
+ */
+task createReleaseNotes() {
+	doLast {
+		// Create a new line character so it will look nice in all text editors
+		def n = System.getProperty("line.separator")
+
+		// Create the release notes file
+		def path = "${rootProject.buildDir}/outputs/release-notes"
+		Files.createDirectories(Paths.get(path))
+		def releaseNotes = new File("$path/release-notes.txt")
+		releaseNotes.write "Release notes"
+
+		if (project.getGradle().startParameter.isOffline()) {
+			return
+		}
+
+		// Define the head of the branch
+		def head = "HEAD"
+
+		// Get all the release tags
+		def versions = getVersions()
+		def lastTag
+		versions.each { version ->
+			def title = ""
+
+			// The first iteration we get the changes between the head and the last tag
+			if (lastTag == null) {
+				lastTag = head
+				title = readVersionName(project) + "." + readVersionCode(project)
+			} else {
+				(lastTag =~ "([0-9.]+)").each { match, result ->
+					title = result.toString().trim()
+				}
+			}
+			def tag = version.tags[0]
+			def changeSet = "${lastTag}...${tag}"
+
+			// Print out the title for the specific set of changes
+			println "Generating change set for $changeSet"
+			releaseNotes.append "$n$n#####################################"
+			releaseNotes.append "$n-------------------------------------"
+			releaseNotes.append "$n\tVersion: $title"
+			releaseNotes.append "$n\tHash: $version.hash"
+			releaseNotes.append "$n\tChange set: $changeSet"
+			releaseNotes.append "$n-------------------------------------"
+			releaseNotes.append "$n#####################################"
+			releaseNotes.append "\n"
+
+			// Get all the changes between different tags
+			getChangesBetweenTags(changeSet).each { change ->
+				releaseNotes.append change
+			}
+
+			// Set up for the next round of iteration
+			lastTag = tag
+			releaseNotes.append n
+		}
+
+		println "Release notes generated and stored in: ${releaseNotes.absolutePath}"
+	}
+}
+
+class Version {
+	String hash
+	String version
+	List<String> tags = new ArrayList<>()
+
+
+	@Override
+	String toString() {
+		return "Version{" +
+				"hash='" + hash + '\'' +
+				", version='" + version + '\'' +
+				", tags=" + tags +
+				'}';
+	}
+}
+
+/**
+ * Use the command line to call git and get a set of tags
+ * The tags used to tag promoted builds will be selected and returned
+ *
+ * @return a list of tags
+ */
+@SuppressWarnings("GroovyUnusedDeclaration")
+def getVersions() {
+	def stdout = new ByteArrayOutputStream()
+	exec {
+		commandLine "git", "show-ref", "--tags"
+		standardOutput = stdout
+	}
+	def output = stdout.toString().trim()
+	def tags = new LinkedHashMap<String, Version>()
+
+	(output =~ "(.*) (.*)").findAll { match ->
+		String tag = match[2]
+		String hash = match[1]
+		def regex = "[0-9]+.[0-9]+.[0-9]+.[0-9]+"
+		def pattern = Pattern.compile(regex)
+		def versionString = tag.find(pattern)
+		if (versionString != null) {
+			if (tags.containsKey(hash)) {
+				Version version = tags.get(hash)
+				version.tags.add(tag)
+			} else {
+				Version version = new Version()
+				version.tags.add(tag)
+				version.hash = hash
+				version.version = versionString
+				tags.put(hash, version)
+			}
+		}
+	}
+
+	def regex = "\\d"
+	def pattern = Pattern.compile(regex)
+
+	// We define our own version comparator as the git version sorting does not work
+	def versionComparator = { Version a, b ->
+
+		def matcherA = pattern.matcher(a.version)
+		def matcherB = pattern.matcher(b.version)
+		def textA = ""
+		def textB = ""
+		def versionA = ""
+		def versionB = ""
+		if (matcherA.find()) {
+			textA = a.version.substring(0, matcherA.start())
+			versionA = a.version.substring(matcherA.start())
+		}
+		if (matcherB.find()) {
+			textB = b.version.substring(0, matcherB.start())
+			versionB = b.version.substring(matcherB.start())
+		}
+
+		if (textA != textB) {
+			return textA <=> textB
+		}
+
+		String[] vals1 = versionA.split("\\.")
+		String[] vals2 = versionB.split("\\.")
+
+		int i = 0
+		// set index to first non-equal ordinal or length of shortest version string
+		while (i < vals1.length && i < vals2.length && vals1[i] == vals2[i]) {
+			i++
+		}
+		// compare first non-equal ordinal number
+		if (i < vals1.length && i < vals2.length) {
+			int diff = Integer.valueOf(vals1[i]) <=> Integer.valueOf(vals2[i])
+			return Integer.signum(diff)
+		}
+		// the strings are equal or one string is a substring of the other
+		// e.g. "1.2.3" = "1.2.3" or "1.2.3" < "1.2.3.4"
+		return Integer.signum(vals1.length - vals2.length)
+	}
+	return tags.values().sort(versionComparator).reverse()
+}
+
+/**
+ * @param changeSet The changeSet we wish to investigate, looks normally like: "Tag1...Tag2"
+ *
+ * @return The set with changes
+ */
+@SuppressWarnings("GroovyUnusedDeclaration")
+def getChangesBetweenTags(changeSet) {
+	def stdout = new ByteArrayOutputStream()
+	exec {
+		commandLine "git", "log", "--pretty=format:'%s'", changeSet
+		standardOutput = stdout
+	}
+	def output = stdout.toString().trim()
+
+	return output
+}

@@ -23,7 +23,7 @@ static def readVersionCode(project) {
 
 static def readVersionName(project) {
 	def version = readVersion(project)
-	def versionName = "${version['versionName']}" + "." + readVersionCode(project)
+	def versionName = "${version['versionName']}"
 	return versionName
 }
 
