@@ -64,7 +64,6 @@ android {
 }
 
 apply from: 'tasks.gradle'
-apply from: '../git_tags.gradle'
 apply from: '../release-notes.gradle'
 
 dependencies {
