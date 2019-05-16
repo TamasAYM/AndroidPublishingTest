@@ -45,14 +45,14 @@ task createReleaseNotes() {
 
 			// Print out the title for the specific set of changes
 			println "Generating change set for $changeSet"
-			releaseNotes.append "$n$n#####################################"
+			releaseNotes.append "$n"
+			releaseNotes.append "$n### --> START of release notes -->"
 			releaseNotes.append "$n-------------------------------------"
 			releaseNotes.append "$n\tVersion: $title"
 			releaseNotes.append "$n\tHash: $version.hash"
 			releaseNotes.append "$n\tTags: $version.tags"
 			releaseNotes.append "$n-------------------------------------"
-			releaseNotes.append "$n#####################################"
-			releaseNotes.append "\n"
+			releaseNotes.append "$n"
 
 			// Get all the changes between different tags
 			getChangesBetweenTags(changeSet).each { change ->
@@ -61,7 +61,9 @@ task createReleaseNotes() {
 
 			// Set up for the next round of iteration
 			lastTag = tag
-			releaseNotes.append n
+			releaseNotes.append "$n"
+			releaseNotes.append "$n### <-- END of release notes <--"
+			releaseNotes.append "$n"
 		}
 
 		println "Release notes generated and stored in: ${releaseNotes.absolutePath}"
