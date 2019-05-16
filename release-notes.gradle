@@ -16,7 +16,7 @@ task createReleaseNotes() {
 		def path = "${rootProject.buildDir}/outputs/release-notes"
 		Files.createDirectories(Paths.get(path))
 		def releaseNotes = new File("$path/release-notes.txt")
-		releaseNotes.write "Release notes"
+		releaseNotes.write "# Release notes"
 
 		if (project.getGradle().startParameter.isOffline()) {
 			return
@@ -61,9 +61,7 @@ task createReleaseNotes() {
 
 			// Set up for the next round of iteration
 			lastTag = tag
-			releaseNotes.append "$n"
 			releaseNotes.append "$n### <-- END of release notes <--"
-			releaseNotes.append "$n"
 		}
 
 		println "Release notes generated and stored in: ${releaseNotes.absolutePath}"
@@ -179,7 +177,7 @@ def getChangesBetweenTags(changeSet) {
 		commandLine "git", "log", "--pretty=format:'%s'", changeSet
 		standardOutput = stdout
 	}
-	def output = stdout.toString().trim()
+	def output = stdout.toString()
 
 	return output
 }
