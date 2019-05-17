@@ -16,7 +16,7 @@ task createReleaseNotes() {
 		def path = "${rootProject.buildDir}/outputs/release-notes"
 		Files.createDirectories(Paths.get(path))
 		def releaseNotes = new File("$path/release-notes.txt")
-		releaseNotes.write "Release notes"
+		releaseNotes.write "# Release notes"
 
 		if (project.getGradle().startParameter.isOffline()) {
 			return
@@ -45,14 +45,14 @@ task createReleaseNotes() {
 
 			// Print out the title for the specific set of changes
 			println "Generating change set for $changeSet"
-			releaseNotes.append "$n$n#####################################"
+			releaseNotes.append "$n"
+			releaseNotes.append "$n### --> START of release notes -->"
 			releaseNotes.append "$n-------------------------------------"
 			releaseNotes.append "$n\tVersion: $title"
 			releaseNotes.append "$n\tHash: $version.hash"
 			releaseNotes.append "$n\tTags: $version.tags"
 			releaseNotes.append "$n-------------------------------------"
-			releaseNotes.append "$n#####################################"
-			releaseNotes.append "\n"
+			releaseNotes.append "$n"
 
 			// Get all the changes between different tags
 			getChangesBetweenTags(changeSet).each { change ->
@@ -61,7 +61,7 @@ task createReleaseNotes() {
 
 			// Set up for the next round of iteration
 			lastTag = tag
-			releaseNotes.append n
+			releaseNotes.append "$n### <-- END of release notes <--"
 		}
 
 		println "Release notes generated and stored in: ${releaseNotes.absolutePath}"
@@ -80,7 +80,7 @@ class Version {
 				"hash='" + hash + '\'' +
 				", version='" + version + '\'' +
 				", tags=" + tags +
-				'}';
+				'}'
 	}
 }
 
@@ -174,10 +174,10 @@ def getVersions() {
 def getChangesBetweenTags(changeSet) {
 	def stdout = new ByteArrayOutputStream()
 	exec {
-		commandLine "git", "log", "--pretty=format:'%s'", changeSet
+		commandLine "git", "log", "--merges", "--pretty=format:'%s'", changeSet
 		standardOutput = stdout
 	}
-	def output = stdout.toString().trim()
+	def output = stdout.toString()
 
 	return output
 }
