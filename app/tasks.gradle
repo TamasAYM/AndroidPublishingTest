@@ -84,10 +84,16 @@ def shouldBuildForBuildType(task) {
 // Renaming e.g.: (envUs/release/)mapping.txt --> mapping-us.txt
 task configureMappingArtifacts() {
 	dependsOn {
-		buildAllBuilds
+		[
+				buildAllBuilds,
+				bundleAll
+		]
 	}
 	mustRunAfter {
-		buildAllBuilds
+		[
+				buildAllBuilds,
+				bundleAll
+		]
 	}
 	doLast {
 		def fromPath = "${buildDir}${File.separator}outputs${File.separator}mapping"
@@ -201,8 +207,7 @@ def shouldBuildBranchForInput(task) {
 	boolean foundMatchingEnvInBranchName = environments.any { env ->
 		if (task == null) {
 			branch.contains("/" + env + "/")
-		}
-		else {
+		} else {
 			task.name.contains("Env" + env.capitalize()) && branch.contains("/" + env + "/")
 		}
 	}
