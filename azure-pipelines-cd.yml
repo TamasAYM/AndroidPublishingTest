@@ -114,6 +114,12 @@ jobs:
       contents: '**/release-notes.txt'
       targetFolder: '$(build.artifactStagingDirectory)'
 
+  - task: CopyFiles@2
+    displayName: Copy services.json
+    inputs:
+      contents: '**/services.json'
+      targetFolder: '$(build.artifactStagingDirectory)'
+
   - task: PublishBuildArtifacts@1
     inputs:
       pathToPublish: '$(build.artifactStagingDirectory)'
