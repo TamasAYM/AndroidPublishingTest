@@ -26,13 +26,13 @@ jobs:
     condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
 
 
-#- job: TestAndAnalyse
-#  pool:
-#    vmImage: 'macOS 10.13'
-#  steps:
-#  - template: azure-testandanalyse.yml
-#  dependsOn: CheckEnvironmentInBranchName
-#  condition: succeeded()
+- job: TestAndAnalyse
+  pool:
+    vmImage: 'macOS 10.13'
+  steps:
+  - template: azure-testandanalyse.yml
+  dependsOn: CheckEnvironmentInBranchName
+  condition: succeeded()
 
 - job: BuildArtifacts
   pool:
