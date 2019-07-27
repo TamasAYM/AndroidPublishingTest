@@ -1,4 +1,4 @@
-package hu.tvarga.androidpublishingtest;
+package hu.tvarga.androidpublishingtestnew;
 
 public class Beer {
 

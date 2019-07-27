@@ -1,7 +1,9 @@
-package hu.tvarga.androidpublishingtest;
+package hu.tvarga.androidpublishingtestnew;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import hu.tvarga.androidpublishingtest.R;
 
 public class MainActivity extends AppCompatActivity {
 

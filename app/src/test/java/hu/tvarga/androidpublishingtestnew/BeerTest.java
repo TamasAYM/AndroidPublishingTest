@@ -1,7 +1,9 @@
-package hu.tvarga.androidpublishingtest;
+package hu.tvarga.androidpublishingtestnew;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import hu.tvarga.androidpublishingtestnew.Beer;
 
 import static org.junit.Assert.assertEquals;
 
