@@ -38,14 +38,14 @@ jobs:
   pool:
     vmImage: 'macOS 10.13'
   steps:
-  - task: DecryptFile@1
-    displayName: Decrypt keystore
-    env:
-      KEYSTORE_ENCRYPTION_KEY: $(KEYSTORE_ENCRYPTION_KEY)
-    inputs:
-      cipher: 'des3'
-      inFile: '$(System.DefaultWorkingDirectory)/etc/dev-new.jks'
-      passphrase: $(KEYSTORE_ENCRYPTION_KEY)
+#  - task: DecryptFile@1
+#    displayName: Decrypt keystore
+#    env:
+#      KEYSTORE_ENCRYPTION_KEY: $(KEYSTORE_ENCRYPTION_KEY)
+#    inputs:
+#      cipher: 'des3'
+#      inFile: '$(System.DefaultWorkingDirectory)/etc/dev-new.jks'
+#      passphrase: $(KEYSTORE_ENCRYPTION_KEY)
 
   - task: Gradle@2
     displayName: Build

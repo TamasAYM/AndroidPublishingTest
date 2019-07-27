@@ -18,7 +18,7 @@ android {
     }
 	signingConfigs {
 		release {
-			storeFile file("../etc/dev-new.jks.out")
+			storeFile file("../etc/not-encrypted-dev-new.jks")
 			keyAlias System.getenv("KEYSTORE_KEY_ALIAS")
 			storePassword System.getenv("KEYSTORE_PASSWORD")
 			keyPassword System.getenv("KEY_PASSWORD")
