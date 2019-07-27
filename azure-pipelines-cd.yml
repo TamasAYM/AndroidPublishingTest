@@ -26,13 +26,13 @@ jobs:
     condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
 
 
-- job: TestAndAnalyse
-  pool:
-    vmImage: 'macOS 10.13'
-  steps:
-  - template: azure-testandanalyse.yml
-  dependsOn: CheckEnvironmentInBranchName
-  condition: succeeded()
+#- job: TestAndAnalyse
+#  pool:
+#    vmImage: 'macOS 10.13'
+#  steps:
+#  - template: azure-testandanalyse.yml
+#  dependsOn: CheckEnvironmentInBranchName
+#  condition: succeeded()
 
 - job: BuildArtifacts
   pool:
@@ -60,7 +60,7 @@ jobs:
       gradleWrapperFile: 'gradlew'
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
-      tasks: 'configureMappingArtifacts configureApkArtifacts -Pbuildtype=$(BUILD_TYPE_FILTER)'
+      tasks: 'configureMappingArtifacts configureApkArtifacts configureAabArtifacts -Pbuildtype=$(BUILD_TYPE_FILTER)'
     condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
 
   - task: Gradle@2
@@ -76,7 +76,7 @@ jobs:
       gradleWrapperFile: 'gradlew'
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
-      tasks: 'configureMappingArtifacts configureApkArtifacts'
+      tasks: 'configureMappingArtifacts configureApkArtifacts configureAabArtifacts'
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'),  eq(variables['SHOULD_BUILD_MASTER'], 'true'))
 
   - task: Gradle@2
@@ -94,6 +94,13 @@ jobs:
     inputs:
       contents: '**/*.apk'
       targetFolder: '$(build.artifactStagingDirectory)'
+
+  - task: CopyFiles@2
+    displayName: Copy aab
+    inputs:
+      contents: '**/*.aab'
+      targetFolder: '$(build.artifactStagingDirectory)'
+
 
   - task: CopyFiles@2
     displayName: Copy mapping

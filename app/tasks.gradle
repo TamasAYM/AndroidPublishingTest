@@ -123,6 +123,62 @@ task configureApkArtifacts() {
 	}
 }
 
+task bundleAll {
+	dependsOn {
+		[
+				runUnitTests,
+				project(':app').tasks.findAll { task ->
+					task.name.startsWith("bundle") &&
+							shouldBundleForBuildType(task) &&
+							shouldBuildBranchForInput(task)
+				}
+		]
+	}
+	mustRunAfter {
+		[
+				runUnitTests
+		]
+	}
+	doLast {
+		println "All bundles have been built"
+	}
+}
+
+// for now only bundle for Release
+def shouldBundleForBuildType(task) {
+	return task.name.contains("Release")
+}
+
+// configure the aab artifacts, namely adding the renamed file to the artifact,
+// only adding those of environments in the environment variable
+// Renaming e.g.: app.aab --> usrelease.aab
+task configureAabArtifacts() {
+	dependsOn {
+		[
+				bundleAll
+		]
+	}
+	mustRunAfter {
+		[
+				bundleAll
+		]
+	}
+	doLast {
+		def fromPath = "${buildDir}${File.separator}outputs${File.separator}bundle"
+		fileTree(fromPath).include('**/**.aab').files.each { each ->
+			File theFile = each
+			def relativePathAndFileName = theFile.path.replace(fromPath + File.separator, "")
+			relativePathAndFileName = relativePathAndFileName.replace(File.separator + "app.aab",
+					".aab")
+			relativePathAndFileName = relativePathAndFileName.replace("env", "")
+			println(relativePathAndFileName)
+			def newName = relativePathAndFileName.toLowerCase()
+			each.renameTo("${fromPath}${File.separator}${newName}")
+		}
+	}
+}
+
+
 static def gitBranch() {
 	def branch = ""
 	def process = "git rev-parse --abbrev-ref HEAD".execute()
