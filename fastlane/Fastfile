@@ -25,19 +25,20 @@ platform :android do
 #
 #  end
 
-#  lane :app_deploy do
-#
-#  	upload_to_play_store(
-#        track: 'alpha',
-#        rollout: '1',
-#        skip_upload_metadata: true,
-#        skip_upload_images: true,
-#        skip_upload_screenshots: true,
-#        apk: '/home/circleci/workspace/app/build/outputs/apk/release/app-release.apk',
-#        mapping: '/home/circleci/workspace/app/build/outputs/mapping/release/mapping.txt'
-#    )
-#
-#  end
+  lane :app_deploy do
+
+  	upload_to_play_store(
+        track: 'alpha',
+        rollout: '1',
+        skip_upload_metadata: true,
+        skip_upload_images: true,
+        skip_upload_apk: true,
+        skip_upload_screenshots: true,
+        json_key: ENV["secureFilePath"],
+        aab: ENV["aab"]
+    )
+
+  end
 
 #  lane :increment_version do
 #
