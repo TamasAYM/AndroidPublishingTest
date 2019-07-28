@@ -35,7 +35,7 @@ platform :android do
         skip_upload_apk: true,
         skip_upload_screenshots: true,
         json_key: './etc/service.json',
-        aab: "./app/build/outputs/bundle/ENV['APP_REGION']release.aab"
+        aab: ENV["aab"]
     )
 
   end
