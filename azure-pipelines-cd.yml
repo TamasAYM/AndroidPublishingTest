@@ -61,7 +61,7 @@ jobs:
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
 #      tasks: 'configureMappingArtifacts configureApkArtifacts configureAabArtifacts -Pbuildtype=$(BUILD_TYPE_FILTER)'
-      tasks: 'configureAabArtifacts -Pbuildtype=$(BUILD_TYPE_FILTER)'
+      tasks: 'configureMappingArtifacts configureApkArtifacts configureAabArtifacts -Pbuildtype=$(BUILD_TYPE_FILTER)'
     condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
 
   - task: Gradle@2
@@ -78,7 +78,8 @@ jobs:
       gradleOptions: '-Xmx3072m'
       publishJUnitResults: false
 #      tasks: 'configureMappingArtifacts configureApkArtifacts configureAabArtifacts'
-      tasks: 'configureMappingArtifacts configureApkArtifacts  and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'),  eq(variables['SHOULD_BUILD_MASTER'], 'true'))
+      tasks: 'configureAabArtifacts'
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'),  eq(variables['SHOULD_BUILD_MASTER'], 'true'))
 
   - task: Gradle@2
     displayName: Release notes
