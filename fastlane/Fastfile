@@ -13,17 +13,17 @@ default_platform(:android)
 
 platform :android do
 
-  lane :app do
-
-  	increment_version_code(
-  		gradle_file_path: "version.properties"
-  	)
-
-  	gradle(
-  		task: "app:assembleRelease"
-  	)
-
-  end
+#  lane :app do
+#
+#  	increment_version_code(
+#  		gradle_file_path: "version.properties"
+#  	)
+#
+#  	gradle(
+#  		task: "app:assembleRelease"
+#  	)
+#
+#  end
 
 #  lane :app_deploy do
 #
@@ -39,12 +39,12 @@ platform :android do
 #
 #  end
 
-  lane :increment_version do
-
-  	increment_version_code(
-  		gradle_file_path: "version.properties"
-  	)
-
-  end
+#  lane :increment_version do
+#
+#  	increment_version_code(
+#  		gradle_file_path: "version.properties"
+#  	)
+#
+#  end
 
 end

@@ -9,21 +9,21 @@ trigger:
 
 jobs:
 
-- job: CheckEnvironmentInBranchName
-  pool:
-    vmImage: 'macOS 10.13'
-  steps:
-  - task: Gradle@2
-    displayName: Check environment in branch name
-    env:
-      BRANCH_NAME: $(Build.SourceBranch)
-    inputs:
-      workingDirectory: ''
-      gradleWrapperFile: 'gradlew'
-      gradleOptions: '-Xmx3072m'
-      publishJUnitResults: false
-      tasks: 'shouldBuildForBranch'
-    condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+#- job: CheckEnvironmentInBranchName
+#  pool:
+#    vmImage: 'macOS 10.13'
+#  steps:
+#  - task: Gradle@2
+#    displayName: Check environment in branch name
+#    env:
+#      BRANCH_NAME: $(Build.SourceBranch)
+#    inputs:
+#      workingDirectory: ''
+#      gradleWrapperFile: 'gradlew'
+#      gradleOptions: '-Xmx3072m'
+#      publishJUnitResults: false
+#      tasks: 'shouldBuildForBranch'
+#    condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
 
 
 #- job: TestAndAnalyse
@@ -131,8 +131,8 @@ jobs:
     inputs:
       pathToPublish: '$(build.artifactStagingDirectory)'
       artifactName: 'BuildArtifacts'
-  dependsOn: CheckEnvironmentInBranchName
-  condition: succeeded()
+#  dependsOn: CheckEnvironmentInBranchName
+#  condition: succeeded()
 
 
 
