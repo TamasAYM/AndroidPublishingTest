@@ -127,6 +127,12 @@ jobs:
       contents: 'Gemfile*'
       targetFolder: '$(build.artifactStagingDirectory)'
 
+  - task: CopyFiles@2
+    displayName: Copy service.json
+    inputs:
+      contents: 'service.json'
+      targetFolder: '$(build.artifactStagingDirectory)'
+
   - task: PublishBuildArtifacts@1
     inputs:
       pathToPublish: '$(build.artifactStagingDirectory)'
