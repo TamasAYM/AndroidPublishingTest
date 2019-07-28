@@ -130,7 +130,7 @@ jobs:
   - task: CopyFiles@2
     displayName: Copy service.json
     inputs:
-      contents: 'service.json'
+      contents: '**/service.json'
       targetFolder: '$(build.artifactStagingDirectory)'
 
   - task: PublishBuildArtifacts@1
