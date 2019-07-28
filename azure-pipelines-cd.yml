@@ -122,10 +122,10 @@ jobs:
       targetFolder: '$(build.artifactStagingDirectory)'
 
   - task: CopyFiles@2
-      displayName: Copy fastlane gemfile
-      inputs:
-        contents: 'Gemfile*'
-        targetFolder: '$(build.artifactStagingDirectory)'
+    displayName: Copy fastlane gemfile
+    inputs:
+      contents: 'Gemfile*'
+      targetFolder: '$(build.artifactStagingDirectory)'
 
   - task: PublishBuildArtifacts@1
     inputs:
