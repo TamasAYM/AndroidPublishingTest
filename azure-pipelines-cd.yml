@@ -115,23 +115,23 @@ jobs:
       contents: '**/release-notes.txt'
       targetFolder: '$(build.artifactStagingDirectory)'
 
-  - task: CopyFiles@2
-    displayName: Copy fastlane
-    inputs:
-      contents: 'fastlane/**'
-      targetFolder: '$(build.artifactStagingDirectory)'
+#  - task: CopyFiles@2
+#    displayName: Copy fastlane
+#    inputs:
+#      contents: 'fastlane/**'
+#      targetFolder: '$(build.artifactStagingDirectory)'
+#
+#  - task: CopyFiles@2
+#    displayName: Copy fastlane gemfile
+#    inputs:
+#      contents: 'Gemfile*'
+#      targetFolder: '$(build.artifactStagingDirectory)'
 
-  - task: CopyFiles@2
-    displayName: Copy fastlane gemfile
-    inputs:
-      contents: 'Gemfile*'
-      targetFolder: '$(build.artifactStagingDirectory)'
-
-  - task: CopyFiles@2
-    displayName: Copy service.json
-    inputs:
-      contents: '**/service.json'
-      targetFolder: '$(build.artifactStagingDirectory)'
+#  - task: CopyFiles@2
+#    displayName: Copy service.json
+#    inputs:
+#      contents: '**/service.json'
+#      targetFolder: '$(build.artifactStagingDirectory)'
 
   - task: PublishBuildArtifacts@1
     inputs:
