@@ -34,8 +34,6 @@ platform :android do
         skip_upload_images: true,
         skip_upload_apk: true,
         skip_upload_screenshots: true,
-        json_key: './etc/service.json',
-        aab: ENV["aab"]
     )
 
   end
