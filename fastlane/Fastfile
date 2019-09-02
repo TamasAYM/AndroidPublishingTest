@@ -35,7 +35,8 @@ platform :android do
         skip_upload_apk: true,
         skip_upload_screenshots: true,
         json_key: ENV["INTERNAL_JSON_KEY"],
-        aab: ENV["AAB_FILE"]
+        aab: ENV["AAB_FILE"],
+        package_name: ENV["PACKAGE_NAME"]
     )
 
   end
