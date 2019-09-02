@@ -28,12 +28,13 @@ platform :android do
   lane :app_deploy do
 
   	upload_to_play_store(
-        track: 'alpha',
+        track: 'internal',
         rollout: '1',
         skip_upload_metadata: true,
         skip_upload_images: true,
         skip_upload_apk: true,
         skip_upload_screenshots: true,
+        json_key: ENV["INTERNAL_JSON_KEY"],
     )
 
   end
