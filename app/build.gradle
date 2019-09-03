@@ -1,4 +1,8 @@
-apply plugin: 'com.android.application'
+plugins {
+	id 'com.android.application'
+	id 'com.github.triplet.play' version '2.2.1'
+}
+apply plugin: 'com.github.triplet.play'
 apply plugin: 'jacoco'
 if (!rootProject.plugins.hasPlugin("org.sonarqube")) {
 	apply plugin: 'org.sonarqube'
@@ -19,9 +23,9 @@ android {
 	signingConfigs {
 		release {
 			storeFile file("../etc/not-encrypted-dev-new.jks")
-			keyAlias System.getenv("KEYSTORE_KEY_ALIAS")
-			storePassword System.getenv("KEYSTORE_PASSWORD")
-			keyPassword System.getenv("KEY_PASSWORD")
+			keyAlias "key0"
+			storePassword "jelszopassword"
+			keyPassword "jelszopassword"
 
 		}
 	}
@@ -72,6 +76,20 @@ android {
 			enableSplit = true
 		}
 	}
+
+	compileOptions {
+		sourceCompatibility JavaVersion.VERSION_1_8
+		targetCompatibility JavaVersion.VERSION_1_8
+	}
+}
+
+play {
+	serviceAccountCredentials = file("../etc/service.json")
+	artifactDir = file("build/outputs/bundle/envUsRelease")
+	track = "alpha"
+	userFraction = 1.0
+	releaseStatus = "draft"
+	defaultToAppBundles = true
 }
 
 apply from: 'tasks.gradle'
