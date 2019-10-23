@@ -1,0 +1,40 @@
+apply plugin: 'com.android.dynamic-feature'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+	compileSdkVersion 28
+
+
+	defaultConfig {
+		minSdkVersion 21
+		targetSdkVersion 28
+		versionCode 1
+		versionName "1.0"
+
+	}
+
+	flavorDimensions 'environment'
+
+	productFlavors {
+
+		// Includes settings you want to keep only while developing your app.
+		envUs {
+			dimension 'environment'
+			applicationIdSuffix ".us"
+		}
+		envCa {
+			dimension 'environment'
+			applicationIdSuffix ".ca"
+		}
+		envJp {
+			dimension 'environment'
+			applicationIdSuffix ".jp"
+		}
+	}
+}
+
+dependencies {
+	implementation fileTree(dir: 'libs', include: ['*.jar'])
+	implementation project(':app')
+}
