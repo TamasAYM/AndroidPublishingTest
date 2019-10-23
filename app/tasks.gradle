@@ -173,12 +173,12 @@ task configureAabArtifacts() {
 		def fromPath = "${buildDir}${File.separator}outputs${File.separator}bundle"
 		fileTree(fromPath).include('**/**.aab').files.each { each ->
 			File theFile = each
-			def relativePathAndFileName = theFile.path.replace(fromPath + File.separator, "")
+			def relativePathAndFileName = theFile.name.replace(fromPath + File.separator, "")
 			relativePathAndFileName = relativePathAndFileName.replace(File.separator + "app.aab",
 					".aab")
 			relativePathAndFileName = relativePathAndFileName.replace("env", "")
-			println(relativePathAndFileName)
 			def newName = relativePathAndFileName.toLowerCase()
+			println(newName)
 			each.renameTo("${fromPath}${File.separator}${newName}")
 		}
 	}
