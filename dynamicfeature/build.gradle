@@ -18,18 +18,20 @@ android {
 
 	productFlavors {
 
-		// Includes settings you want to keep only while developing your app.
 		envUs {
 			dimension 'environment'
-			applicationIdSuffix ".us"
 		}
 		envCa {
 			dimension 'environment'
-			applicationIdSuffix ".ca"
 		}
 		envJp {
 			dimension 'environment'
-			applicationIdSuffix ".jp"
+		}
+	}
+
+	buildTypes {
+		uat {
+			matchingFallbacks = ['debug', 'release']
 		}
 	}
 }
